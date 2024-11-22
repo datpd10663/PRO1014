@@ -1,282 +1,311 @@
-<?php
-// Start session and include necessary files at the top
-session_start();
-require_once('./PRO1014/model/config.php'); // Include your database configuration
-require_once('');
-require_once('model/danhmuc.php');
-require_once('model/dangnhap.php');
-
-if (isset($_GET['chucnang'])) {
-    $chucnang = $_GET['chucnang'];
-
-    switch ($chucnang) {
-        case 'hienthitc':
-            $tatcasanpham = tatcasanpham();
-            include('admin.php');
-            break;
-
-        case 'themmoitc':
-            include('views/thucung/them.php');
-            break;
-
-        case 'xylythemmoitc':
-            if (isset($_POST['masp'], $_POST['tensp'], $_POST['dongia'], $_POST['mota'], $_POST['madm'])) {
-                if (isset($_FILES['hinhanh']) && $_FILES['hinhanh']['error'] == 0) {
-                    $picture = $_FILES['hinhanh'];
-                    $path = __DIR__ . '/uploadFiles';
-                    if (!is_dir($path)) {
-                        mkdir($path);
-                    }
-                    $filename = basename($picture['name']);
-                    $fullpath = $path . '/' . $filename;
-
-                    if (move_uploaded_file($picture['tmp_name'], $fullpath)) {
-                        $hinhanh = 'uploadFiles/' . $filename;
-                        themmoi($_POST['masp'], $_POST['tensp'], $hinhanh, $_POST['dongia'], $_POST['mota'], $_POST['madm']);
-                        header('Location: index.php?chucnang=hienthitc');
-                        exit;
-                    } else {
-                        echo 'Upload file không thành công!';
-                    }
-                } else {
-                    echo 'Vui lòng chọn file hình ảnh!';
-                }
-            } else {
-                echo 'Vui lòng nhập đầy đủ thông tin!';
-            }
-            break;
-
-        case 'suatc':
-            if (isset($_GET['ma'])) {
-                $ma_san_pham = $_GET['ma'];
-                $sql = "SELECT * FROM sanpham WHERE masp = ?";
-                $stmt = $connection->prepare($sql);
-                $stmt->bind_param("s", $ma_san_pham);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $sanpham = $result->fetch_assoc();
-                $stmt->close();
-            }
-            include('views/thucung/sua.php');
-            break;
-
-        case 'xulysuatc':
-            if (isset($_GET['ma'])) {
-                $ma_san_pham = $_GET['ma'];
-                $sql = "SELECT * FROM sanpham WHERE masp = ?";
-                $stmt = $connection->prepare($sql);
-                $stmt->bind_param("s", $ma_san_pham);
-                $stmt->execute();
-                $result = $stmt->get_result();
-
-                if ($result->num_rows > 0) {
-                    $sanpham = $result->fetch_assoc();
-                } else {
-                    echo "Không tìm thấy sản phẩm.";
-                    exit;
-                }
-                $stmt->close();
-
-                if (isset($_POST['masp'], $_POST['tensp'], $_POST['mota'], $_POST['dongia'])) {
-                    $duongdan = $sanpham['hinhanh']; // Default image path
-
-                    if (isset($_FILES['hinhanh']) && $_FILES['hinhanh']['error'] == 0) {
-                        $picture = $_FILES['hinhanh'];
-                        $filename = basename($picture['name']);
-                        $fullpath = __DIR__ . '/uploadFiles/' . $filename;
-
-                        if (move_uploaded_file($picture['tmp_name'], $fullpath)) {
-                            $duongdan = 'uploadFiles/' . $filename;
-                        } else {
-                            echo 'Upload file không thành công!';
-                            exit;
-                        }
-                    }
-
-                    $sql_update = "UPDATE sanpham SET tensp = ?, mota = ?, dongia = ?, hinhanh = ? WHERE masp = ?";
-                    $stmt = $connection->prepare($sql_update);
-                    $stmt->bind_param("sssss", $_POST['tensp'], $_POST['mota'], $_POST['dongia'], $duongdan, $_POST['masp']);
-                    if ($stmt->execute()) {
-                        header('Location: index.php?chucnang=hienthitc');
-                        exit;
-                    } else {
-                        echo "Lỗi cập nhật: " . $stmt->error;
-                        exit;
-                    }
-                    $stmt->close();
-                } else {
-                    echo "Dữ liệu không hợp lệ.";
-                    exit;
-                }
-            }
-            break;
-
-        case 'xoatc':
-            include('views/thucung/xoa.php');
-            break;
-
-        case 'xulyxoatc':
-            if (isset($_POST['macanxoa'], $_POST['xacnhan'])) {
-                if ($_POST['xacnhan'] == 'xoa') {
-                    xoa($_POST['macanxoa']);
-                    header('Location: index.php?chucnang=hienthitc');
-                    exit;
-                }
-                if ($_POST['xacnhan'] == 'huy') {
-                    header('Location: index.php?chucnang=hienthitc');
-                    exit;
-                }
-            }
-            break;
-
-        case 'hienthidm':
-            $tatcadanhmuc = tatcadanhmuc();
-            include('views/danhmuc/hienthidm.php');
-            break;
-
-        case 'themdm':
-            include('views/danhmuc/themdm.php');
-            break;
-
-        case 'xulythemdm':
-            if (isset($_POST['tendm'], $_POST['mota'])) {
-                $tendm = $_POST['tendm'];
-                $mota = $_POST['mota'];
-
-                $sql = "INSERT INTO danhmuc (tendm, mota) VALUES (?, ?)";
-                $stmt = $connection->prepare($sql);
-                $stmt->bind_param("ss", $tendm, $mota);
-                if ($stmt->execute()) {
-                    header('Location: index.php?chucnang=hienthidm');
-                } else {
-                    echo "Lỗi: " . $stmt->error;
-                }
-                $stmt->close();
-            }
-            break;
-
-        case 'xoadm':
-            include('views/danhmuc/xoadm.php');
-            break;
-
-        case 'xulyxoadm':
-            if (isset($_POST['macanxoa'], $_POST['xacnhan'])) {
-                if ($_POST['xacnhan'] == 'xoa') {
-                    $sql = "DELETE FROM danhmuc WHERE madm = ?";
-                    $stmt = $connection->prepare($sql);
-                    $stmt->bind_param("s", $_POST['macanxoa']);
-                    $stmt->execute();
-                    header('Location: index.php?chucnang=hienthidm');
-                    exit;
-                }
-                if ($_POST['xacnhan'] == 'huy') {
-                    header('Location: index.php?chucnang=hienthidm');
-                    exit;
-                }
-            }
-            break;
-
-        case 'suadm':
-            if (isset($_GET['ma'])) {
-                $ma_danhmuc = $_GET['ma'];
-                $sql = "SELECT * FROM danhmuc WHERE madm = ?";
-                $stmt = $connection->prepare($sql);
-                $stmt->bind_param("s", $ma_danhmuc);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $danhmuc = $result->fetch_assoc();
-                $stmt->close();
-            }
-            include('views/danhmuc/suadm.php');
-            break;
-
-        case 'xulysuadm':
-            if (isset($_GET['ma'])) {
-                $ma_danhmuc = $_GET['ma'];
-                if (isset($_POST['tendm'], $_POST['mota'])) {
-                    $sql = "UPDATE danhmuc SET tendm = ?, mota = ? WHERE madm = ?";
-                    $stmt = $connection->prepare($sql);
-                    $stmt->bind_param("sss", $_POST['tendm'], $_POST['mota'], $ma_danhmuc);
-                    if ($stmt->execute()) {
-                        header('Location: index.php?chucnang=hienthidm');
-                    } else {
-                        echo "Lỗi cập nhật: " . $stmt->error;
-                    }
-                    $stmt->close();
-                }
-            }
-            break;
-
-        case 'login':
-            include('views/dangnhap/login.php');
-            break;
-
-        case 'xulylogin':
-            if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
-                $tentk = $_POST['tentk'];
-                $matkhau = $_POST['matkhau'];
-
-                $sql = "SELECT * FROM taikhoan WHERE tentk = ? AND matkhau = ?";
-                $stmt = $connection->prepare($sql);
-                $stmt->bind_param("ss", $tentk, $matkhau);
-                $stmt->execute();
-                $result = $stmt->get_result();
-
-                if ($result->num_rows > 0) {
-                    $row = $result->fetch_assoc();
-                    $_SESSION['matk'] = $row['matk'];
-                    $_SESSION['tentk'] = $row['tentk'];
-                    $_SESSION['vaitro'] = $row['vaitro'];
-
-                    if ($row['vaitro'] == 'admin') {
-                        header("Location: admin.php");
-                    } else {
-                        header("Location: index.php");
-                    }
-                    exit();
-                } else {
-                    $error = "Tài khoản hoặc mật khẩu không đúng!";
-                }
-                $stmt->close();
-            }
-            include('views/dangnhap/login.php');
-            break;
-
-        case 'dangki':
-            include('views/dangnhap/dangki.php');
-            break;
-
-        case 'xulydangki':
-            if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
-                $tentk = $_POST['tentk'];
-                $email = $_POST['email'];
-                $matkhau = $_POST['matkhau'];
-                $vaitro = $_POST['vaitro'];
-
-                $sql = "INSERT INTO taikhoan (tentk, email, matkhau, vaitro) VALUES (?, ?, ?, ?)";
-                $stmt = $connection->prepare($sql);
-                $stmt->bind_param("ssss", $tentk, $email, $matkhau, $vaitro);
-                if ($stmt->execute()) {
-                    echo "Đăng ký thành công!";
-                } else {
-                    echo "Lỗi: " . $stmt->error;
-                }
-                $stmt->close();
-            }
-            break;
-            case 'hoadon':
-                include('hoadon.php');
-                break;
-            
-            case 'logout':
-                include('logout.php');
-                break;
-
-        default:
-            include('views/trangchu.php');
-            break;
+    <?php
+    // Start session and include necessary files
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
-} else {
-    include('views/trangchu.php');
-}
-?>
+    require_once('../model/config.php');
+    require_once('../model/dangnhap.php');
+    require_once('../model/product.php');
+
+    if (isset($_GET['chucnang'])) {
+        $chucnang = $_GET['chucnang'];
+
+        switch ($chucnang) {
+            
+            case 'login':
+                include('../views/dangnhap/dangnhap.php');
+                break;
+
+                case 'xulylogin':
+                    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
+                        $username = trim($_POST['username']);
+                        $password = trim($_POST['password']);
+                
+                        $sql = "SELECT * FROM User WHERE username = ? AND password = ? limit 1";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("ss", $username, $password);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                
+                        if ($result->num_rows > 0) {
+                            $row = $result->fetch_assoc();
+                            $_SESSION['id'] = $row['id'];
+                            $_SESSION['username'] = $row['username'];
+                            $_SESSION['role_id'] = $row['role_id'];
+                
+                            if ($row['role_id'] == 1) {
+                                header("Location: ../admin/admin.php");
+                            } elseif ($row['role_id'] == 2) {
+                                header("Location: nhanvien.php");
+                            } else {
+                                header("Location: ../index.php");
+                            }
+                            exit();
+                        } else {
+                            // Gán thông báo lỗi
+                            $error = "Tài khoản hoặc mật khẩu không đúng!";
+                        }
+                        $stmt->close();
+                    }
+                
+                    // Gọi giao diện login và truyền lỗi
+                    include('../views/dangnhap/dangnhap.php');
+                    break;
+                    
+                    case 'logout':
+                        // Start the session
+                        session_start();
+                        // Unset all session variables
+                        session_unset();
+                        // Destroy the session
+                        session_destroy();
+                        // Redirect to homepage or login page
+                        header("Location: ../index.php");
+                        exit(); // Ensure the script stops after redirection
+                        break;
+                
+            case 'dangki':
+                include('../views/dangnhap/dangki.php');
+                break;
+
+            case 'xulydangki':
+                if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
+                    $username = trim($_POST['username']);
+                    $email = trim($_POST['email']);
+                    $password = trim($_POST['password']);
+                    $phone_number = trim($_POST['phone_number']);
+                    $address = trim($_POST['address']);
+
+                    if (themmoitk($username, $email, $password, $phone_number, $address)) {
+                        echo "Đăng ký thành công!";
+                        header("Location: index.php?chucnang=login");
+                        exit();
+                    } else {
+                        echo "Lỗi: Không thể đăng ký!";
+                    }
+                }
+                break;
+
+
+                case 'themmoi':
+                    // Show form to add new product
+                    include('../admin/addproduct.php');
+                    break;
+        
+                    case 'xulythemmoi':
+                        if (isset($_POST['name_product']) && isset($_POST['price']) && isset($_POST['description']) && isset($_POST['category_id'])) {
+                            if (isset($_FILES['ava'])) {
+                                $picture = $_FILES['ava'];
+                                $path = __DIR__ . '/uploadFiles';
+                                if (!is_dir($path))
+                                    mkdir($path, 0777, true); // Create directory if not exists
+                    
+                                // Move uploaded file
+                                if (move_uploaded_file($picture['tmp_name'], $path . '/' . $picture['name'])) {
+                                    $duongdan = 'uploadFiles/' . $picture['name'];
+                    
+                                    // Check if category exists in the database
+                                    $madm = $_POST['category_id'];
+                                    $madm_check_query = "SELECT * FROM Category WHERE category_id = ?";
+                                    $stmt = $conn->prepare($madm_check_query);
+                                    $stmt->bind_param("s", $madm);
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                    
+                                    if ($result->num_rows > 0) {
+                                        // Insert product into the database
+                                        $sql = "INSERT INTO Product (name_product, description, price, address, category_id) VALUES (?, ?, ?, ?, ?)";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->bind_param("ssiss", $_POST['name_product'], $_POST['description'], $_POST['price'], $duongdan, $_POST['category_id']);
+                                        if ($stmt->execute()) {
+                                            echo 'Thêm mới sản phẩm thành công!';
+                                            header('Location: ../admin/admin.php');
+                                        } else {
+                                            echo 'Lỗi khi chèn dữ liệu: ' . $stmt->error;
+                                        }
+                                    } else {
+                                        echo 'Lỗi: Mã danh mục không tồn tại.';
+                                    }
+                                } else {
+                                    echo 'Upload file không thành công!';
+                                }
+                            }
+                        }
+                        break;     
+                        case 'sua':
+                            if (isset($_GET['ma'])) {
+                                $product_id = $_GET['ma'];
+                        
+                                // Truy vấn lấy thông tin sản phẩm từ database
+                                $sql = "SELECT * FROM Product WHERE product_id = ?";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param("i", $product_id);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                        
+                                if ($result->num_rows > 0) {
+                                    $sanpham = $result->fetch_assoc();
+                                } else {
+                                    echo "Không tìm thấy sản phẩm.";
+                                    exit;
+                                }
+                                $stmt->close();
+                        
+                                // Hiển thị form sửa (gọi file giao diện `updateproduct.php`)
+                                include('../admin/updateproduct.php');
+                            } else {
+                                echo "Mã sản phẩm không hợp lệ.";
+                                exit;
+                            }
+                            break;
+                
+                            case 'xulysua':
+                                if (isset($_GET['ma'])) {
+                                    $product_id = $_GET['ma'];
+                                    
+                                    // Truy vấn lấy thông tin sản phẩm
+                                    $sql = "SELECT * FROM Product WHERE product_id = ?";
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->bind_param("i", $product_id);
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                            
+                                    if ($result->num_rows > 0) {
+                                        $sanpham = $result->fetch_assoc();
+                                    } else {
+                                        echo "Không tìm thấy sản phẩm.";
+                                        exit;
+                                    }
+                                    $stmt->close();
+                            
+                                    // Kiểm tra và xử lý dữ liệu từ form
+                                    if (isset($_POST['name_product'], $_POST['description'], $_POST['price'])) {
+                                        $name_product = $_POST['name_product'];
+                                        $description = $_POST['description'];
+                                        $price = $_POST['price'];
+                            
+                                        // Xử lý hình ảnh
+                                        $address = $sanpham['address']; // Giữ hình ảnh hiện tại
+                                        if (isset($_FILES['address']) && $_FILES['address']['error'] == 0) {
+                                            $picture = $_FILES['address'];
+                                            $filename = time() . '_' . basename($picture['name']);
+                                            $upload_path = __DIR__ . '/../control/uploadFiles/' . $filename;
+                            
+                                            if (move_uploaded_file($picture['tmp_name'], $upload_path)) {
+                                                $address = 'uploadFiles/' . $filename;
+                                            } else {
+                                                echo "Upload file không thành công!";
+                                                exit;
+                                            }
+                                        }
+                            
+                                        // Cập nhật sản phẩm
+                                        $sql_update = "UPDATE Product SET name_product = ?, description = ?, price = ?, address = ? WHERE product_id = ?";
+                                        $stmt = $conn->prepare($sql_update);
+                                        $stmt->bind_param("ssdsi", $name_product, $description, $price, $address, $product_id);
+                                        if ($stmt->execute()) {
+                                            header('Location: ../admin/admin.php');
+                                            exit;
+                                        } else {
+                                            echo "Lỗi cập nhật: " . $stmt->error;
+                                        }
+                                        $stmt->close();
+                                    } else {
+                                        echo "Dữ liệu không hợp lệ.";
+                                        exit;
+                                    }
+                                }
+                                break; 
+                                case 'xoa':
+                                    if (isset($_GET['ma'])) {
+                                        $product_id = $_GET['ma'];
+                                
+                                        // Truy vấn thông tin sản phẩm từ database
+                                        $sql = "SELECT * FROM Product WHERE product_id = ?";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->bind_param("i", $product_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                
+                                        if ($result->num_rows > 0) {
+                                            $sanpham = $result->fetch_assoc();
+                                        } else {
+                                            echo "Không tìm thấy sản phẩm cần xóa.";
+                                            exit;
+                                        }
+                                        $stmt->close();
+                                
+                                        // Hiển thị giao diện xác nhận xóa
+                                        include('../admin/delete.php');
+                                    } else {
+                                        echo "Mã sản phẩm không hợp lệ.";
+                                        exit;
+                                    }
+                                    break;
+                                case 'xulyxoa':
+                                    if (isset($_POST['macanxoa'], $_POST['xacnhan'])) {
+                                        if ($_POST['xacnhan'] == 'xoa') {
+                                            xoa($_POST['macanxoa']);
+                                            header('Location: ../admin/admin.php');
+                                            exit;
+                                        }
+                                        if ($_POST['xacnhan'] == 'huy') {
+                                            header('Location: ../admin/admin.php');
+                                            exit;
+                                        }
+                                    }
+                                    break;     
+                                   
+                                        case 'add':
+                                            if (isset($_POST['product_id'], $_POST['quantity']) && isset($_SESSION['id'])) {
+                                                $product_id = (int)$_POST['product_id'];
+                                                $quantity = (int)$_POST['quantity'];
+                                                $user_id = (int)$_SESSION['id'];
+                                        
+                                                if (addToCart($user_id, $product_id, $quantity)) {
+                                                    header("Location: ../views/cart/cartview.php");
+                                                    exit;
+                                                } else {
+                                                    echo "Lỗi khi thêm sản phẩm vào giỏ hàng.";
+                                                }
+                                            } else {
+                                                echo "Dữ liệu không hợp lệ.";
+                                            }
+                                            break;
+                                        
+                                            
+                                            case 'view':
+                                                if (isset($_SESSION['id'])) {
+                                                    $user_id = $_SESSION['id'];
+                                                    $cart = getCart($user_id);
+                                                    include('../views/cart/cartview.php');
+                                                }
+                                                break;
+                                    
+                                            case 'update':
+                                                if (isset($_POST['cart_item_id'], $_POST['quantity'])) {
+                                                    $cart_item_id = $_POST['cart_item_id'];
+                                                    $quantity = $_POST['quantity'];
+                                                    if (updateCartItem($cart_item_id, $quantity)) {
+                                                        header("Location: ../views/cart/cartview.php");
+                                                    } else {
+                                                        echo "Lỗi khi cập nhật giỏ hàng.";
+                                                    }
+                                                }
+                                                break;
+                                    
+                                            case 'remove':
+                                                if (isset($_GET['cart_item_id'])) {
+                                                    $cart_item_id = $_GET['cart_item_id'];
+                                                    if (removeItemFromCart($cart_item_id)) {
+                                                        header("Location: ../views/cart/cartview.php");
+                                                    } else {
+                                                        echo "Lỗi khi xóa sản phẩm khỏi giỏ hàng.";
+                                                    }
+                                                }
+                                                break;
+                                            }   
+                                     }
+
+    
+    ?>
