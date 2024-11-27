@@ -153,6 +153,26 @@
 
                 <input type="submit" value="Đăng ký" name="register">
             </form>
+
+<script>
+function validateName() {
+    const usernameInput = document.getElementById("username");
+    const username = usernameInput.value.trim();
+
+    // Kiểm tra nếu tên không viết hoa chữ cái đầu của mỗi từ
+    const capitalized = username.split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+
+    if (username !== capitalized) {
+        alert("Tên tài khoản phải viết hoa chữ cái đầu của mỗi từ!");
+        usernameInput.value = capitalized; // Tự động sửa lại
+        return false; // Ngăn việc gửi biểu mẫu
+    }
+
+    return true; // Hợp lệ
+}
+</script>
         </div>
     </div>
 </body>

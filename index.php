@@ -13,6 +13,7 @@ if (isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) {
     // Nếu giỏ hàng rỗng, số lượng sản phẩm là 0
     $giohang_count = 0;
 }
+
     $sql = 'select * from Product';
     $tacasanpham = mysqli_query($conn,$sql);
 ?>
@@ -710,7 +711,7 @@ footer {
     
     <div class="header-right">
         <div class="icons">
-            <a href="./control/index.php?chucnang=view">
+            <a href="./views/cart/cartview.php">
             <span class="cart-count">🛒 <?php echo $giohang_count; ?></span>
             </a>
         </div>

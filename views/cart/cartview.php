@@ -1,3 +1,51 @@
+<?php
+require_once('../../model/config.php');
+require_once('../../model/product.php');
+require_once('../../model/cart.php');
+
+// Start session
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Initialize cart if it's not already set
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// Check if the user is logged in
+$user = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8') : null;
+
+if ($user) {
+    // Get user ID from session
+    $user_id = $_SESSION['user_id'];
+
+    // Fetch cart data from the database if necessary
+    $cart_query = "SELECT c.cart_id, ci.cart_item_id, ci.product_id, ci.quantity, p.name_product, p.price
+                   FROM Cart c
+                   JOIN Cart_Item ci ON c.cart_id = ci.cart_id
+                   JOIN Product p ON ci.product_id = p.product_id
+                   WHERE c.user_id = ?";
+    
+    $stmt = $conn->prepare($cart_query);
+    $stmt->bind_param("i", $user_id); // 'i' for integer
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $cart_items = $result->fetch_all(MYSQLI_ASSOC);
+
+    $stmt->close();
+    $conn->close();
+} else {
+    $cart_items = $_SESSION['cart']; // If not logged in, use session cart data
+}
+
+// Count the number of items in the cart
+$giohang_count = count($cart_items);
+?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,23 +54,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="cart.css">
+    <style>
+      .l1 {
+    position: relative;
+    display: inline-block;
+}
+
+/* Initially hide the login/sign-up menu */
+.l1 ul {
+    display: none;
+    position: absolute;
+    top: 100%; /* Place the menu directly below the icon */
+    left: 50%;  /* Position it at the center */
+    transform: translateX(-50%); /* Offset to ensure it's truly centered */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Deeper shadow for better visibility */
+    list-style: none;
+    margin: 0;
+    z-index: 100; /* Ensure the dropdown appears above other elements */
+    width: 180px; /* Fixed width for consistent dropdown */
+    opacity: 0; /* Hide the dropdown initially */
+    visibility: hidden; /* Keep the dropdown invisible */
+    transition: opacity 0.3s ease, visibility 0s 0.3s; /* Smooth fade-in/fade-out effect */
+}
+
+/* Show the menu when hovering over the .l1 container */
+.l1:hover ul {
+    display: block;
+    opacity: 1;
+    visibility: visible; /* Make it visible with a smooth transition */
+    transition: opacity 0.3s ease, visibility 0s 0s; /* Instant visibility change when hovering */
+}
+
+/* Style the items inside the dropdown menu */
+.l1 ul li {
+    padding: 8px 15px;
+    font-size: 16px;
+    color: #333;
+    transition: background-color 0.3s; /* Smooth background change on hover */
+}
+
+/* Style for the links inside the dropdown */
+.l1 ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    display: block;
+}
+
+/* Hover effect for the links */
+.l1 ul li a:hover {
+    color: #00693e;  /* Green color on hover */
+}
+
+/* Change background color of menu items when hovering */
+.l1 ul li:hover {
+    background-color: #f0f0f0;  /* Light grey background on hover */
+}
+
+/* Style the profile icon */
+.l1 .icon {
+    width: 30px; /* Adjust size of the profile icon */
+    height: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Smooth scale-up effect on hover */
+}
+
+/* Add hover effect to profile icon */
+.l1 .icon:hover {
+    transform: scale(1.1); /* Slightly increase the size of the icon when hovered */
+}
+
+    
+    </style>
 </head>
 <body>
      <!--Header-->
      <header class="header">
-        <div class="header-left">
-            <img src="/img/Logo.jpg" alt="Logo" class="logo">
-            <input type="text" placeholder="Bạn muốn mua gì..." class="search-bar">
+    <div class="header-left">
+        <img src="../../img/logo đen.png" height="50%" alt="Logo" class="logo">
+        <input type="text" placeholder="Bạn muốn mua gì..." class="search-bar">
+    </div>
+    
+    <div class="header-right">
+        <div class="icons">
+            <!-- <a href="./control/index.php?chucnang=cart"> -->
+            <span class="cart-count">🛒 <?php echo $giohang_count; ?></span>
+            </a>
         </div>
-        <div class="header-right">
-            <div class="delivery-option">
-                <img src="https://phuclong.com.vn/_next/static/images/delivery-686d7142750173aa8bc5f1d11ea195e4.png" alt="Delivery Icon" class="delivery-icon">
-                <span>Chọn Phương Thức Nhận Hàng</span>
-            </div>
-            <a href="#"><img src="../../img/Mail.jpg" alt="Mail Icon" class="icon"></a>
-                <a href="#"><img src="../../img/Profile.jpg" alt="Profile Icon" class="icon"></a>
+        <div class="user-greeting">
+            <?php if ($user): ?>
+                <b style="position:relative; vertical-align: middle; font-weight:400; margin-top: 40px;">Xin chào - <?php echo $user; ?></b>
+            <?php endif; ?>
         </div>
-    </header>
+        
+        <div class="l1">
+            <i class="icons">
+            <img src="../../img/profile.png" alt="Profile Icon" class="icon">
+
+                <ul>
+                    <?php if (isset($_SESSION['username'])) { ?>
+                        <li><a href="../control/index.php?chucnang=view">Giỏ hàng</a></li>
+                        <li><a href="hoadon.php">Hóa đơn</a></li>
+                        <li><a href="../control/index.php?chucnang=logout">Đăng xuất</a></li>
+                    <?php } else { ?>
+                        <li><a href="../control/index.php?chucnang=login">Đăng nhập</a></li>
+                        <li><a href="../control/index.php?chucnang=dangki">Đăng ký</a></li>
+                    <?php } ?>
+                </ul>
+            </i>
+        </div>
+        
+    </div>
+</header>
     <nav class="navbar">
         <ul class="nav-list">
             <li><a href="#">Trang Chủ</a></li>
@@ -97,43 +244,44 @@
     <!-- Giỏ hàng -->
     <div class="cart-container">
         <div class="cart-items">
-            <h2>GIỎ HÀNG CỦA TÔI</h2>
-            <!-- Giỏ hàng sẽ được render bằng JavaScript -->
+            <h2>Giỏ hàng của tôi</h2>
+            <?php if (!empty($cart_items)): ?>
+                <table>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Tổng</th>
+                    </tr>
+                    <?php 
+                    $total = 0;
+                    foreach ($cart_items as $item): 
+                        $item_total = $item['quantity'] * $item['price'];
+                        $total += $item_total;
+                    ?>
+                   <tr>
+                      <td><?php echo htmlspecialchars($item['name_product'], ENT_QUOTES, 'UTF-8'); ?></td>
+                      <td><?php echo $item['quantity']; ?></td>
+                      <td><?php echo number_format($item['price'], 3, ',', '.') . "đ"; ?></td> <!-- Chỉnh lại số chữ số -->
+                      <td><?php echo number_format($item_total, 3, ',', '.') . "đ"; ?></td> <!-- Chỉnh lại số chữ số -->
+                  </tr>
+                    <?php endforeach; ?>
+                </table>
+            <?php else: ?>
+                <p>Giỏ hàng của bạn hiện tại trống.</p>
+            <?php endif; ?>
         </div>
-    
+        
         <div class="cart-summary">
-            <h3><span id="total-items">0</span> MÓN</h3>
+            <h3><span id="total-items"><?php echo $giohang_count; ?></span> Món</h3>
             <div class="summary-details">
-                <p>Tổng đơn hàng: <span id="subtotal">0đ</span></p>
+                <p>Tổng đơn hàng: <span id="subtotal"><?php echo number_format($total, 0, ',', '.') . "đ"; ?></span></p>
                 <p>Phí giao hàng: <span id="shipping">10.000đ</span></p>
-                <p>Tổng thanh toán: <span id="total" class="highlight">10.000đ</span></p>
+                <p>Tổng thanh toán: <span id="total" class="highlight"><?php echo number_format($total + 10000, 0, ',', '.') . "đ"; ?></span></p>
             </div>
-            <button id="checkout-btn">Thanh Toán <span id="final-total">10.000đ</span></button>
+            <button id="checkout-btn" onclick="window.location.href='checkout.php'">Thanh toán</button>
         </div>
     </div>
-    
-    <!-- Gợi ý sản phẩm -->
-    <div class="combo-section">
-        <h3>Sẽ ngon hơn khi thưởng thức cùng bạn bè...</h3>
-        <div class="combo-items">
-            <div class="combo-item" data-name="Trà Sữa Ô Long" data-price="48000">
-                <img src="https://hcm.fstorage.vn/images/2022/dmcap081-dmcap083-phin-den-da_d852660d-1e23-46bd-a1af-117247dc77f0-og.png" alt="Trà Sữa Ô Long">
-                <p>Trà Sữa Ô Long</p>
-                <p>48.000đ</p>
-            </div>
-            <div class="combo-item" data-name="Trà Sữa Matcha" data-price="52000">
-                <img src="https://hcm.fstorage.vn/images/2022/dmcap093-dmcap094-cappuccino-vietnamo_55905766-ff9f-435b-aa3b-e14018c188a3-og.png" alt="Trà Sữa Matcha">
-                <p>Trà Sữa Matcha</p>
-                <p>52.000đ</p>
-            </div>
-            <div class="combo-item" data-name="Trà Đào" data-price="35000">
-                <img src="https://hcm.fstorage.vn/images/2022/dmcap082-dmcap084-phin-sua-da_3795a527-1b5b-4aaa-9d92-0d82385e4406-og.png" alt="Trà Đào">
-                <p>Trà Đào</p>
-                <p>35.000đ</p>
-            </div>
-        </div>
-    </div>
-    
 
 <!-- Footter -->
 <footer style="background-color: #007a2a; color: white; padding: 20px; font-size: 15px; line-height: 1.6;">

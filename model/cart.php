@@ -1,11 +1,9 @@
 <?php
-require_once('config.php');
-
 // Thêm sản phẩm vào giỏ hàng
 function addToCart($user_id, $product_id, $quantity) {
     global $conn;
-    // Kiểm tra nếu sản phẩm đã có trong giỏ hàng chưa
-    $sql = "SELECT * FROM Cart WHERE user_id = ?";
+    // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
+    $sql = "SELECT c.cart_id FROM Cart c WHERE c.user_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();

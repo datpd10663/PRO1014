@@ -109,17 +109,23 @@
             <img src="../img/logo xanh.png" alt="Gé cafe"> 
         </div>
         <form action="index.php?chucnang=xulylogin" method="POST">
-            <label for="username">Tên Tài Khoản:</label>
-            <input type="text" id="username" name="username" placeholder="Nhập tên tài khoản" required>
+            <label for="username">Tên tài khoản:</label>
+            <input type="text" id="username" name="username" required>
 
             <label for="password">Mật khẩu:</label>
-            <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
+            <input type="password" id="password" name="password" required>
 
             <?php if (!empty($error)) { ?>
-            <p class="error"><?php echo htmlspecialchars($error); ?></p> <!-- Hiển thị lỗi -->
+            <p class="error"><?php echo htmlspecialchars($error); ?></p>
             <?php } ?>
 
-            <input type="submit" class="btn-login" name="login" value="ĐĂNG NHẬP">
+            <input class="btn-login```php
+<?php if (!empty($error)) { ?>
+    <div class="error">
+        <?php echo htmlspecialchars($error); ?>
+    </div>
+<?php } ?>
+```" type="submit" value="Đăng Nhập" name="login">
         </form>
 
         <div class="forgot-password">

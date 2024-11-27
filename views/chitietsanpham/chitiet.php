@@ -24,27 +24,8 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    $sanpham = $result->fetch_assoc();
-
-    if (!$sanpham) {
-        die("Sản phẩm không tồn tại!");
-    }
-} else {
-    die("ID sản phẩm bị thiếu.");
-}
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
-    // Lấy dữ liệu từ form
-    $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : null;
-    $size = isset($_POST['size']) ? $_POST['size'] : '';
-    $sweetness = isset($_POST['sweetness']) ? $_POST['sweetness'] : '';
-    $ice = isset($_POST['ice']) ? $_POST['ice'] : '';
-
-    if (!$product_id) {
-        die("Lỗi: ID sản phẩm không hợp lệ.");
-    }
-
-
-}    
+    $sanpham = $result->fetch_assoc();  
+}  
 ?>
 
 <!DOCTYPE html>
@@ -724,9 +705,6 @@ footer {
 .l1 .icon:hover {
     transform: scale(1.1); /* Slightly increase the size of the icon when hovered */
 }
-
-    
-
     </style>
 </head>
 <body>
@@ -850,47 +828,51 @@ footer {
         <div class="price-quantity">
     <div class="price"><?php echo htmlspecialchars($sanpham['price']); ?> đ</div>
 </div>
+<h1>Chọn chi tiết sản phẩm</h1>
 <form action="../../control/index.php?chucnang=add" method="POST">
     <!-- Chọn kích cỡ -->
-    <label>Chọn kích cỡ</label>
+    <label>Chọn kích cỡ:</label>
     <div class="size-options">
         <label>
-            <input type="radio" name="size" value="M"> M
+            <input type="radio" name="size" value="M" required> M
         </label>
         <label>
             <input type="radio" name="size" value="L" checked> L
         </label>
+        <label>
+            <input type="radio" name="size" value="XL"> XL
+        </label>
     </div>
 
     <!-- Độ ngọt -->
-    <label>Ngọt</label>
+    <label>Chọn độ ngọt:</label>
     <div class="sweet-options">
         <label>
-            <input type="radio" name="sweetness" value="Ít" checked> Ít
+            <input type="radio" name="sweetness" value="Ít" required> Ít
         </label>
         <label>
-            <input type="radio" name="sweetness" value="Bình thường"> Bình thường
+            <input type="radio" name="sweetness" value="Bình thường" checked> Bình thường
         </label>
         <label>
             <input type="radio" name="sweetness" value="Nhiều"> Nhiều
         </label>
     </div>
 
-    <!-- Đá -->
-    <label>Đá</label>
+    <!-- Chọn đá -->
+    <label>Chọn độ đá:</label>
     <div class="ice-options">
         <label>
-            <input type="radio" name="ice" value="Ít" checked> Ít
+            <input type="radio" name="ice" value="Ít" required> Ít
         </label>
         <label>
-            <input type="radio" name="ice" value="Bình thường"> Bình thường
+            <input type="radio" name="ice" value="Bình thường" checked> Bình thường
         </label>
         <label>
             <input type="radio" name="ice" value="Nhiều"> Nhiều
         </label>
     </div>
 
-    <!-- Product ID -->
+    <!-- Product ID (Ẩn đi) -->
     <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product_id); ?>">
 
     <!-- Nút submit -->

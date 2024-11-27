@@ -6,6 +6,7 @@
     require_once('../model/config.php');
     require_once('../model/dangnhap.php');
     require_once('../model/product.php');
+    require_once('../model/cart.php');
 
     if (isset($_GET['chucnang'])) {
         $chucnang = $_GET['chucnang'];
@@ -17,40 +18,55 @@
                 break;
 
                 case 'xulylogin':
-                    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                         $username = trim($_POST['username']);
                         $password = trim($_POST['password']);
                 
-                        $sql = "SELECT * FROM User WHERE username = ? AND password = ? limit 1";
+                        // Chuỗi salt cố định (phải giống với salt trong phần đăng ký)
+                        $salt = 'chuoi_bao_mat'; 
+                        $hashed_password = hash('sha256', $salt . $password);
+                
+                        // Truy vấn cơ sở dữ liệu
+                        $sql = "SELECT * FROM User WHERE username = ? AND password = ? LIMIT 1";
                         $stmt = $conn->prepare($sql);
-                        $stmt->bind_param("ss", $username, $password);
+                        $stmt->bind_param("ss", $username, $hashed_password);
                         $stmt->execute();
                         $result = $stmt->get_result();
                 
                         if ($result->num_rows > 0) {
                             $row = $result->fetch_assoc();
-                            $_SESSION['id'] = $row['id'];
+                
+                            // Khởi động session
+                            if (session_status() === PHP_SESSION_NONE) {
+                                session_start();
+                            }
+                            $_SESSION['user_id'] = $row['user_id'];
                             $_SESSION['username'] = $row['username'];
                             $_SESSION['role_id'] = $row['role_id'];
                 
-                            if ($row['role_id'] == 1) {
-                                header("Location: ../admin/admin.php");
-                            } elseif ($row['role_id'] == 2) {
-                                header("Location: nhanvien.php");
-                            } else {
-                                header("Location: ../index.php");
+                            // Chuyển hướng dựa trên vai trò
+                            switch ($row['role_id']) {
+                                case 1:
+                                    header("Location: ../admin/admin.php");
+                                    break;
+                                case 2:
+                                    header("Location: nhanvien.php");
+                                    break;
+                                default:
+                                    header("Location: ../index.php");
                             }
                             exit();
                         } else {
-                            // Gán thông báo lỗi
-                            $error = "Tài khoản hoặc mật khẩu không đúng!";
+                            $error = "Tên đăng nhập hoặc mật khẩu không đúng!";
                         }
                         $stmt->close();
                     }
                 
-                    // Gọi giao diện login và truyền lỗi
                     include('../views/dangnhap/dangnhap.php');
                     break;
+                
+                
+                
                     
                     case 'logout':
                         // Start the session
@@ -68,24 +84,25 @@
                 include('../views/dangnhap/dangki.php');
                 break;
 
-            case 'xulydangki':
-                if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
-                    $username = trim($_POST['username']);
-                    $email = trim($_POST['email']);
-                    $password = trim($_POST['password']);
-                    $phone_number = trim($_POST['phone_number']);
-                    $address = trim($_POST['address']);
-
-                    if (themmoitk($username, $email, $password, $phone_number, $address)) {
-                        echo "Đăng ký thành công!";
-                        header("Location: index.php?chucnang=login");
-                        exit();
-                    } else {
-                        echo "Lỗi: Không thể đăng ký!";
+                case 'xulydangki':
+                    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
+                        $username = trim($_POST['username']);
+                        $email = trim($_POST['email']);
+                        $password = trim($_POST['password']);
+                        $phone_number = trim($_POST['phone_number']);
+                        $address = trim($_POST['address']);
+                
+                        // Gọi hàm thêm mới tài khoản
+                        if (themmoitk($username, $email, $password, $phone_number, $address)) {
+                            echo "Đăng ký thành công!";
+                            header("Location: index.php?chucnang=login");
+                            exit();
+                        } else {
+                            echo "Lỗi: Không thể đăng ký!";
+                        }
                     }
-                }
-                break;
-
+                    break;
+                
 
                 case 'themmoi':
                     // Show form to add new product
@@ -255,55 +272,126 @@
                                         }
                                     }
                                     break;     
-                                   
-                                        case 'add':
-                                            if (isset($_POST['product_id'], $_POST['quantity']) && isset($_SESSION['id'])) {
-                                                $product_id = (int)$_POST['product_id'];
-                                                $quantity = (int)$_POST['quantity'];
-                                                $user_id = (int)$_SESSION['id'];
-                                        
-                                                if (addToCart($user_id, $product_id, $quantity)) {
-                                                    header("Location: ../views/cart/cartview.php");
-                                                    exit;
-                                                } else {
-                                                    echo "Lỗi khi thêm sản phẩm vào giỏ hàng.";
-                                                }
+                                    case 'add':
+                                        // Kiểm tra người dùng đã đăng nhập chưa
+                                        if (!isset($_SESSION['user_id'])) {
+                                            echo "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.";
+                                            exit;
+                                        }
+                            
+                                        $user_id = $_SESSION['user_id']; // Lấy ID người dùng từ session
+                            
+                                        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                                            // Lấy thông tin từ form
+                                            $product_id = $_POST['product_id'];
+                                            $size = $_POST['size'];
+                                            $sweetness = $_POST['sweetness'];
+                                            $ice = $_POST['ice'];
+                            
+                                            // Bước 1: Kiểm tra hoặc tạo mới giỏ hàng
+                                            $sql_cart = "SELECT cart_id FROM Cart WHERE user_id = ?";
+                                            $stmt_cart = $conn->prepare($sql_cart);
+                                            $stmt_cart->bind_param("i", $user_id);
+                                            $stmt_cart->execute();
+                                            $result_cart = $stmt_cart->get_result();
+                            
+                                            if ($result_cart->num_rows == 0) {
+                                                // Nếu chưa có giỏ hàng, thêm mới
+                                                $sql_insert_cart = "INSERT INTO Cart (user_id) VALUES (?)";
+                                                $stmt_insert_cart = $conn->prepare($sql_insert_cart);
+                                                $stmt_insert_cart->bind_param("i", $user_id);
+                                                $stmt_insert_cart->execute();
+                                                $cart_id = $conn->insert_id;
+                                                $stmt_insert_cart->close();
                                             } else {
-                                                echo "Dữ liệu không hợp lệ.";
+                                                // Nếu đã có giỏ hàng, lấy cart_id
+                                                $row_cart = $result_cart->fetch_assoc();
+                                                $cart_id = $row_cart['cart_id'];
+                                            }
+                                            $stmt_cart->close();
+                            
+                                            // Bước 2: Thêm chi tiết sản phẩm vào bảng ProductDetail
+                                            $sql_detail = "INSERT INTO ProductDetail (product_id, size, sweetness_level, ice_level) 
+                                                           VALUES (?, ?, ?, ?)";
+                                            $stmt_detail = $conn->prepare($sql_detail);
+                                            $stmt_detail->bind_param("isss", $product_id, $size, $sweetness, $ice);
+                                            if ($stmt_detail->execute()) {
+                                                $stmt_detail->close();
+                            
+                                                // Bước 3: Thêm sản phẩm vào chi tiết giỏ hàng
+                                                $sql_check_item = "SELECT cart_item_id, quantity FROM Cart_Item 
+                                                                   WHERE cart_id = ? AND product_id = ?";
+                                                $stmt_check_item = $conn->prepare($sql_check_item);
+                                                $stmt_check_item->bind_param("ii", $cart_id, $product_id);
+                                                $stmt_check_item->execute();
+                                                $result_check_item = $stmt_check_item->get_result();
+                            
+                                                if ($result_check_item->num_rows > 0) {
+                                                    // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng
+                                                    $row_item = $result_check_item->fetch_assoc();
+                                                    $new_quantity = $row_item['quantity'] + 1;
+                            
+                                                    $sql_update_item = "UPDATE Cart_Item SET quantity = ? WHERE cart_item_id = ?";
+                                                    $stmt_update_item = $conn->prepare($sql_update_item);
+                                                    $stmt_update_item->bind_param("ii", $new_quantity, $row_item['cart_item_id']);
+                                                    $stmt_update_item->execute();
+                                                    $stmt_update_item->close();
+                                                } else {
+                                                    // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
+                                                    $quantity = 1; // Mặc định số lượng là 1
+                                                    $sql_insert_item = "INSERT INTO Cart_Item (cart_id, product_id, quantity) 
+                                                                        VALUES (?, ?, ?)";
+                                                    $stmt_insert_item = $conn->prepare($sql_insert_item);
+                                                    $stmt_insert_item->bind_param("iii", $cart_id, $product_id, $quantity);
+                                                    $stmt_insert_item->execute();
+                                                    $stmt_insert_item->close();
+                                                }
+                                                $stmt_check_item->close();
+                            
+                                                // Chuyển hướng sau khi thêm thành công
+                                                header("Location: ../views/cart/cartview.php");
+                                                exit;
+                                            } else {
+                                                echo "Có lỗi xảy ra khi thêm chi tiết sản phẩm.";
+                                            }
+                                        }
+                                        break;
+                            
+                                        case 'view':
+                                            if (isset($_SESSION['user_id'])) {
+                                                $user_id = $_SESSION['user_id'];
+                                                $cart = getCart($user_id);
+                                                include('../views/cart/cartview.php');
+                                            } else {
+                                                echo "Vui lòng đăng nhập để xem giỏ hàng.";
                                             }
                                             break;
-                                        
                                             
-                                            case 'view':
-                                                if (isset($_SESSION['id'])) {
-                                                    $user_id = $_SESSION['id'];
-                                                    $cart = getCart($user_id);
-                                                    include('../views/cart/cartview.php');
+                                        case 'update':
+                                            if (isset($_POST['cart_item_id'], $_POST['quantity'])) {
+                                                $cart_item_id = $_POST['cart_item_id'];
+                                                $quantity = $_POST['quantity'];
+                                                if (updateCartItem($cart_item_id, $quantity)) {
+                                                    header("Location: ../views/cart/cartview.php");
+                                                    exit();
+                                                } else {
+                                                    echo "Lỗi khi cập nhật giỏ hàng.";
                                                 }
-                                                break;
-                                    
-                                            case 'update':
-                                                if (isset($_POST['cart_item_id'], $_POST['quantity'])) {
-                                                    $cart_item_id = $_POST['cart_item_id'];
-                                                    $quantity = $_POST['quantity'];
-                                                    if (updateCartItem($cart_item_id, $quantity)) {
-                                                        header("Location: ../views/cart/cartview.php");
-                                                    } else {
-                                                        echo "Lỗi khi cập nhật giỏ hàng.";
-                                                    }
+                                            }
+                                            break;
+                                            
+                                        case 'remove':
+                                            if (isset($_GET['cart_item_id'])) {
+                                                $cart_item_id = $_GET['cart_item_id'];
+                                                if (removeItemFromCart($cart_item_id)) {
+                                                    header("Location: ../views/cart/cartview.php");
+                                                    exit();
+                                                } else {
+                                                    echo "Lỗi khi xóa sản phẩm khỏi giỏ hàng.";
                                                 }
-                                                break;
-                                    
-                                            case 'remove':
-                                                if (isset($_GET['cart_item_id'])) {
-                                                    $cart_item_id = $_GET['cart_item_id'];
-                                                    if (removeItemFromCart($cart_item_id)) {
-                                                        header("Location: ../views/cart/cartview.php");
-                                                    } else {
-                                                        echo "Lỗi khi xóa sản phẩm khỏi giỏ hàng.";
-                                                    }
-                                                }
-                                                break;
+                                            }
+                                            break;
+                                            
                                             }   
                                      }
 
