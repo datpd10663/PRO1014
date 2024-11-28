@@ -7,6 +7,7 @@
     require_once('../model/dangnhap.php');
     require_once('../model/product.php');
     require_once('../model/cart.php');
+    include_once('../model/order.php');
 
     if (isset($_GET['chucnang'])) {
         $chucnang = $_GET['chucnang'];
@@ -367,31 +368,74 @@
                                             }
                                             break;
                                             
-                                        case 'update':
-                                            if (isset($_POST['cart_item_id'], $_POST['quantity'])) {
-                                                $cart_item_id = $_POST['cart_item_id'];
-                                                $quantity = $_POST['quantity'];
-                                                if (updateCartItem($cart_item_id, $quantity)) {
-                                                    header("Location: ../views/cart/cartview.php");
+                                            case 'update':
+                                                if (isset($_POST['cart_item_id']) && isset($_POST['quantity'])) {
+                                                    // Lặp qua từng sản phẩm và cập nhật số lượng
+                                                    foreach ($_POST['cart_item_id'] as $key => $cart_item_id) {
+                                                        $quantity = $_POST['quantity'][$key];
+                                                
+                                                        // Thực hiện cập nhật số lượng sản phẩm trong giỏ hàng
+                                                        $sql = "UPDATE cart_item SET quantity = ? WHERE cart_item_id = ?";
+                                                
+                                                        // Chuẩn bị câu lệnh SQL và liên kết các tham số
+                                                        if ($stmt = $conn->prepare($sql)) {
+                                                            $stmt->bind_param("ii", $quantity, $cart_item_id); // 'ii' là kiểu dữ liệu (integer, integer)
+                                                            $stmt->execute(); // Thực thi câu lệnh
+                                                            $stmt->close(); // Đóng câu lệnh chuẩn bị
+                                                        } else {
+                                                            echo "Lỗi khi chuẩn bị câu lệnh: " . $conn->error;
+                                                        }
+                                                    }
+                                                
+                                                    // Sau khi cập nhật xong, bạn có thể chuyển hướng lại giỏ hàng hoặc hiển thị thông báo
+                                                    header("Location: ../views/cart/cartview.php"); // Đổi sang trang giỏ hàng của bạn
                                                     exit();
                                                 } else {
-                                                    echo "Lỗi khi cập nhật giỏ hàng.";
+                                                    echo "Dữ liệu không hợp lệ.";
                                                 }
-                                            }
-                                            break;
                                             
-                                        case 'remove':
-                                            if (isset($_GET['cart_item_id'])) {
-                                                $cart_item_id = $_GET['cart_item_id'];
-                                                if (removeItemFromCart($cart_item_id)) {
-                                                    header("Location: ../views/cart/cartview.php");
-                                                    exit();
-                                                } else {
-                                                    echo "Lỗi khi xóa sản phẩm khỏi giỏ hàng.";
+                                            case 'remove':
+                                                if (isset($_GET['cart_item_id'])) {
+                                                    $cart_item_id = $_GET['cart_item_id'];
+                                                    if (removeItemFromCart($cart_item_id)) {
+                                                        header("Location: ../views/cart/cartview.php");
+                                                        exit();
+                                                    } else {
+                                                        echo "Lỗi khi xóa sản phẩm khỏi giỏ hàng.";
+                                                    }
                                                 }
-                                            }
-                                            break;
-                                            
+                                                break;
+                                                case 'place_order':
+                                                    // Kiểm tra nếu giỏ hàng không trống
+                                                    if (isset($_SESSION['cart_items']) && !empty($_SESSION['cart_items'])) {
+                                                        // Lấy tổng từ session
+                                                        $cart_total = isset($_SESSION['total']) ? $_SESSION['total'] : 0;
+                                                    
+                                                        $_SESSION['cart_total'] = $cart_total;
+                                                    } else {
+                                                        echo "Giỏ hàng trống. Vui lòng thêm sản phẩm vào giỏ hàng.";
+                                                        exit();
+                                                    }
+                                                
+                                                    // Lấy thông tin từ người dùng
+                                                    $user_id = $_SESSION['user_id'];
+                                                    $address = $_POST['address'];
+                                                    $total_amount = $_SESSION['cart_total']; // Lấy giá trị từ session
+                                                    $status = "Pending";
+                                                
+                                                    // Gọi model để đặt hàng
+                                                    if (placeOrder($user_id, $address, $total_amount, $status)) {
+                                                        // Xóa giỏ hàng sau khi đặt hàng thành công
+                                                        unset($_SESSION['cart_items']);
+                                                        unset($_SESSION['cart_total']);
+                                                
+                                                        // Chuyển hướng đến trang thành công
+                                                        header("Location: ../views/order/success.php");
+                                                        exit();
+                                                    } else {
+                                                        echo "Đã xảy ra lỗi khi đặt hàng.";
+                                                    }
+                                                    break;
                                             }   
                                      }
 

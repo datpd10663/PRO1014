@@ -759,19 +759,7 @@ footer {
                             <li>Bst kim cúc mộc tê</li>
                         </ul>
                     </div>
-                    <div class="submenu">
-                        <h4>BÁNH</h4>
-                        <ul>
-                            <li>Bánh lạnh</li>
-                            <li>Bánh cookies - croissant</li>
-                            <li>Bánh mì</li>
-                        </ul>
-                        <h4>BST LY GẤU GIÁNG SINH</h4>
-                        <ul>
-                            <li>Combo ly gấu và nước 169k</li>
-                            <li>Ly gấu 149k</li>
-                        </ul>
-                    </div>
+                   
                 </div>
             </li>
             <li class="dropdown">
@@ -786,12 +774,6 @@ footer {
                             <li>Trà trà tam giác</li>
                             <li>Trà lài</li>
                             <li>Trà xanh </li>
-                        </ul>
-                    </div>
-                    <div class="submenu">
-                        <h4>CÀ PHÊ</h4>
-                        <ul>
-                            <li>Cà phê hạt không bơ</li>
                         </ul>
                     </div>
                 </div>

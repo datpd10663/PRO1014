@@ -127,8 +127,207 @@ $giohang_count = count($cart_items);
 .l1 .icon:hover {
     transform: scale(1.1); /* Slightly increase the size of the icon when hovered */
 }
+/* Giỏ hàng */
+.cart-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
 
-    
+.cart-items h2 {
+    text-align: center;
+    font-size: 34px;
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+.cart-items table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+.cart-items th, .cart-items td {
+    padding: 18px;
+    text-align: left;
+    font-size: 18px;
+    color: #555;
+}
+
+.cart-items th {
+    background-color: #ecf0f1;
+    font-weight: 600;
+    color: #34495e;
+}
+
+.cart-items td {
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-items input[type="number"] {
+    width: 70px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    text-align: center;
+    transition: border-color 0.3s ease;
+}
+
+.cart-items input[type="number"]:focus {
+    border-color: #3498db;
+}
+
+.cart-items button {
+    padding: 2px 7px; /* Nút nhỏ lại */
+    background-color: #2ecc71; /* Màu xanh lá cây */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px; /* Kích thước chữ nhỏ */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 5px;
+}
+
+.cart-items button:hover {
+    background-color: #27ae60; /* Màu xanh lá cây tối hơn khi hover */
+    transform: translateY(-3px);
+}
+
+.cart-items td a {
+    color: #e74c3c;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.cart-items td a:hover {
+    color: #c0392b;
+}
+
+.cart-summary {
+    margin-top: 40px;
+    padding: 30px;
+    background-color: #ecf0f1;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.cart-summary h3 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #34495e;
+    margin-bottom: 25px;
+}
+
+.cart-summary p {
+    font-size: 18px;
+    color: #555;
+    margin: 10px 0;
+}
+
+.cart-summary span {
+    font-weight: 600;
+}
+
+.cart-summary .highlight {
+    color: #2ecc71;
+    font-size: 22px;
+}
+
+.cart-summary button {
+    width: 100%;
+    padding: 14px;
+    background-color: #2ecc71; /* Màu xanh lá cây */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: background-color 0.3s ease;
+}
+
+.cart-summary button:hover {
+    background-color: #27ae60; /* Màu xanh lá cây tối hơn khi hover */
+}
+
+.cart-container button {
+    width: 100%;
+    padding: 14px;
+    background-color: #2ecc71; /* Màu xanh lá cây */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: background-color 0.3s ease;
+}
+
+.cart-container button:hover {
+    background-color: #27ae60; /* Màu xanh lá cây tối hơn khi hover */
+}
+/* Nút trong giỏ hàng */
+.cart-items button {
+    padding: 5px 12px; /* Giảm padding để làm nút nhỏ lại */
+    background-color: #229954; /* Màu xanh lá cây đậm hơn */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px; /* Kích thước chữ nhỏ */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 5px;
+}
+
+.cart-items button:hover {
+    background-color: #1e8449; /* Màu xanh lá cây đậm tối hơn khi hover */
+    transform: translateY(-3px);
+}
+
+/* Nút cập nhật giỏ hàng */
+.cart-container button {
+    width: auto; /* Giữ chiều rộng tự động */
+    padding: 6px 14px; /* Giảm padding để nút nhỏ hơn */
+    background-color: #229954; /* Màu xanh lá cây đậm hơn */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px; /* Kích thước chữ nhỏ */
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.cart-container button:hover {
+    background-color: #1e8449; /* Màu xanh lá cây đậm tối hơn khi hover */
+}
+
+/* Nút thanh toán trong tóm tắt giỏ hàng */
+.cart-summary button {
+    width: 100%;
+    padding: 8px 16px; /* Giảm padding để nút nhỏ lại */
+    background-color: #229954; /* Màu xanh lá cây đậm hơn */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px; /* Kích thước chữ nhỏ */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cart-summary button:hover {
+    background-color: #1e8449; /* Màu xanh lá cây đậm tối hơn khi hover */
+}
+
     </style>
 </head>
 <body>
@@ -159,7 +358,7 @@ $giohang_count = count($cart_items);
                     <?php if (isset($_SESSION['username'])) { ?>
                         <li><a href="../control/index.php?chucnang=view">Giỏ hàng</a></li>
                         <li><a href="hoadon.php">Hóa đơn</a></li>
-                        <li><a href="../control/index.php?chucnang=logout">Đăng xuất</a></li>
+                        <li><a href="../../control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
                         <li><a href="../control/index.php?chucnang=login">Đăng nhập</a></li>
                         <li><a href="../control/index.php?chucnang=dangki">Đăng ký</a></li>
@@ -243,46 +442,59 @@ $giohang_count = count($cart_items);
 
     <!-- Giỏ hàng -->
     <div class="cart-container">
-        <div class="cart-items">
-            <h2>Giỏ hàng của tôi</h2>
-            <?php if (!empty($cart_items)): ?>
-                <table>
-                    <tr>
-                        <th>Sản phẩm</th>
-                        <th>Số lượng</th>
-                        <th>Giá</th>
-                        <th>Tổng</th>
-                    </tr>
-                    <?php 
-                    $total = 0;
-                    foreach ($cart_items as $item): 
-                        $item_total = $item['quantity'] * $item['price'];
-                        $total += $item_total;
-                    ?>
-                   <tr>
-                      <td><?php echo htmlspecialchars($item['name_product'], ENT_QUOTES, 'UTF-8'); ?></td>
-                      <td><?php echo $item['quantity']; ?></td>
-                      <td><?php echo number_format($item['price'], 3, ',', '.') . "đ"; ?></td> <!-- Chỉnh lại số chữ số -->
-                      <td><?php echo number_format($item_total, 3, ',', '.') . "đ"; ?></td> <!-- Chỉnh lại số chữ số -->
-                  </tr>
-                    <?php endforeach; ?>
-                </table>
-            <?php else: ?>
-                <p>Giỏ hàng của bạn hiện tại trống.</p>
-            <?php endif; ?>
-        </div>
-        
-        <div class="cart-summary">
-            <h3><span id="total-items"><?php echo $giohang_count; ?></span> Món</h3>
-            <div class="summary-details">
-                <p>Tổng đơn hàng: <span id="subtotal"><?php echo number_format($total, 0, ',', '.') . "đ"; ?></span></p>
-                <p>Phí giao hàng: <span id="shipping">10.000đ</span></p>
-                <p>Tổng thanh toán: <span id="total" class="highlight"><?php echo number_format($total + 10000, 0, ',', '.') . "đ"; ?></span></p>
-            </div>
-            <button id="checkout-btn" onclick="window.location.href='checkout.php'">Thanh toán</button>
-        </div>
+    <div class="cart-items">
+    <h2>Giỏ hàng của tôi</h2>
+<?php if (!empty($cart_items)): ?>
+    <form action="../../control/index.php?chucnang=update" method="post">
+        <table>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th>Tổng</th>
+                <th>Hành động</th>
+            </tr>
+            <?php 
+            $total = 0; // Khởi tạo tổng tiền
+            foreach ($cart_items as $item): 
+                $item_total = $item['quantity'] * $item['price'];
+                $total += $item_total; // Tính tổng tiền
+            // Lưu tổng vào session
+            $_SESSION['total'] = $total;
+            ?>
+            <tr>
+                <td><?php echo htmlspecialchars($item['name_product'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td>
+                    <input type="hidden" name="cart_item_id[]" value="<?php echo $item['cart_item_id']; ?>">
+                    <input type="number" name="quantity[]" value="<?php echo $item['quantity']; ?>" min="1">
+                </td>
+                <td><?php echo number_format($item['price'], 3, ',', '.') . "đ"; ?></td>
+                <td><?php echo number_format($item_total, 3, ',', '.') . "đ"; ?></td>
+                <td>
+                    <a href="../../control/index.php?chucnang=remove&cart_item_id=<?php echo $item['cart_item_id']; ?>">Xóa</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+
+        <!-- Nút cập nhật cho tất cả sản phẩm -->
+        <button type="submit">Cập nhật giỏ hàng</button>
+    </form>
+
+    <div class="cart-summary">
+        <h3>Tóm tắt giỏ hàng</h3>
+        <p>Tổng tiền hàng: <span><?php echo number_format($total, 3, ',', '.') . "đ"; ?></span></p>
+        <p>Tổng thanh toán: <span class="highlight"><?php echo number_format($total, 3, ',', '.') . "đ"; ?></span></p>
+        <button onclick="window.location.href='../order/order.php';">Đặt hàng</button>
     </div>
 
+    <button onclick="window.location.href='../../index.php';">Quay lại menu</button>
+<?php else: ?>
+    <p>Giỏ hàng của bạn hiện tại trống.</p>
+    <button onclick="window.location.href='../../views/product/list.php';">Quay lại menu</button>
+<?php endif; ?>
+    </div>
+</div>
 <!-- Footter -->
 <footer style="background-color: #007a2a; color: white; padding: 20px; font-size: 15px; line-height: 1.6;">
     <div style="display: flex; flex-wrap: wrap; gap: 20px;">

@@ -734,9 +734,9 @@ footer {
                     <?php if (isset($_SESSION['username'])) { ?>
                         <li><a href="../control/index.php?chucnang=view">Giỏ hàng</a></li>
                         <li><a href="hoadon.php">Hóa đơn</a></li>
-                        <li><a href="../control/index.php?chucnang=logout">Đăng xuất</a></li>
+                        <li><a href="../../control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
-                        <li><a href="../control/index.php?chucnang=login">Đăng nhập</a></li>
+                        <li><a href="../../control/index.php?chucnang=login">Đăng nhập</a></li>
                         <li><a href="../control/index.php?chucnang=dangki">Đăng ký</a></li>
                     <?php } ?>
                 </ul>

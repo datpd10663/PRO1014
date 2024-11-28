@@ -119,13 +119,7 @@
             <p class="error"><?php echo htmlspecialchars($error); ?></p>
             <?php } ?>
 
-            <input class="btn-login```php
-<?php if (!empty($error)) { ?>
-    <div class="error">
-        <?php echo htmlspecialchars($error); ?>
-    </div>
-<?php } ?>
-```" type="submit" value="Đăng Nhập" name="login">
+            <input class ="btn-login"type="submit" value="Đăng Nhập" name="login">
         </form>
 
         <div class="forgot-password">
