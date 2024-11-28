@@ -405,37 +405,37 @@
                                                     }
                                                 }
                                                 break;
-                                                case 'place_order':
-                                                    // Kiểm tra nếu giỏ hàng không trống
-                                                    if (isset($_SESSION['cart_items']) && !empty($_SESSION['cart_items'])) {
-                                                        // Lấy tổng từ session
-                                                        $cart_total = isset($_SESSION['total']) ? $_SESSION['total'] : 0;
+                                                // case 'place_order':
+                                                //     // Kiểm tra nếu giỏ hàng không trống
+                                                //     if (isset($_SESSION['cart_items']) && !empty($_SESSION['cart_items'])) {
+                                                //         // Lấy tổng từ session
+                                                //         $cart_total = isset($_SESSION['total']) ? $_SESSION['total'] : 0;
                                                     
-                                                        $_SESSION['cart_total'] = $cart_total;
-                                                    } else {
-                                                        echo "Giỏ hàng trống. Vui lòng thêm sản phẩm vào giỏ hàng.";
-                                                        exit();
-                                                    }
+                                                //         $_SESSION['cart_total'] = $cart_total;
+                                                //     } else {
+                                                //         echo "Giỏ hàng trống. Vui lòng thêm sản phẩm vào giỏ hàng.";
+                                                //         exit();
+                                                //     }
                                                 
-                                                    // Lấy thông tin từ người dùng
-                                                    $user_id = $_SESSION['user_id'];
-                                                    $address = $_POST['address'];
-                                                    $total_amount = $_SESSION['cart_total']; // Lấy giá trị từ session
-                                                    $status = "Pending";
+                                                //     // Lấy thông tin từ người dùng
+                                                //     $user_id = $_SESSION['user_id'];
+                                                //     $address = $_POST['address'];
+                                                //     $total_amount = $_SESSION['cart_total']; // Lấy giá trị từ session
+                                                //     $status = "Pending";
                                                 
-                                                    // Gọi model để đặt hàng
-                                                    if (placeOrder($user_id, $address, $total_amount, $status)) {
-                                                        // Xóa giỏ hàng sau khi đặt hàng thành công
-                                                        unset($_SESSION['cart_items']);
-                                                        unset($_SESSION['cart_total']);
+                                                //     // Gọi model để đặt hàng
+                                                //     if (placeOrder($user_id, $address, $total_amount, $status)) {
+                                                //         // Xóa giỏ hàng sau khi đặt hàng thành công
+                                                //         unset($_SESSION['cart_items']);
+                                                //         unset($_SESSION['cart_total']);
                                                 
-                                                        // Chuyển hướng đến trang thành công
-                                                        header("Location: ../views/order/success.php");
-                                                        exit();
-                                                    } else {
-                                                        echo "Đã xảy ra lỗi khi đặt hàng.";
-                                                    }
-                                                    break;
+                                                //         // Chuyển hướng đến trang thành công
+                                                //         header("Location: ../views/order/success.php");
+                                                //         exit();
+                                                //     } else {
+                                                //         echo "Đã xảy ra lỗi khi đặt hàng.";
+                                                //     }
+                                                //     break;
                                             }   
                                      }
 
