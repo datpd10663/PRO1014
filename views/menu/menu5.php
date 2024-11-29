@@ -1,5 +1,5 @@
 <?php
-include_once('./model/config.php');
+include_once('../../model/config.php');
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -38,11 +38,13 @@ if ($user) {
 $giohang_count = count($cart_items);
 
 // Chạy truy vấn khác sau khi truy vấn giỏ hàng đã xong
-$sql = 'SELECT * FROM Product limit 5' ;
+$sql = 'SELECT * FROM Product WHERE category_id = 5';
 $tacasanpham = mysqli_query($conn, $sql);
 
-// Đừng quên đóng kết nối khi đã xong
-$conn->close();
+// Kiểm tra nếu có lỗi khi thực thi truy vấn
+if (!$tacasanpham) {
+    die("Lỗi truy vấn: " . mysqli_error($conn));
+}
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +53,8 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compact Header Section</title>
-   
+    <link>
+    <link rel="stylesheet" href="menu.css">
     <script src="./script.js"></script>
     <style>
         .logo{
@@ -63,7 +66,7 @@ $conn->close();
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    box-sizing: border-box; 
     font-family: Arial, sans-serif;
 }
 .container {
@@ -737,7 +740,7 @@ footer {
 <body>
 <header class="header">
     <div class="header-left">
-        <img src="./img/logo bee.png" height="50%" width="500px;" alt="Logo" class="logo">
+        <img src="../../img/logo bee.png" height="50%" width="500px;" alt="Logo" class="logo">
         <input type="text" placeholder="Bạn muốn mua gì..." class="search-bar">
     </div>
     
@@ -755,15 +758,15 @@ footer {
         
         <div class="l1">
             <i class="icons">
-                <img src="./img/profile.png" alt="Profile Icon" class="icon">
+                <img src="../../img/profile.png" alt="Profile Icon" class="icon">
                 <ul>
                     <?php if (isset($_SESSION['username'])) { ?>
-                        <li><a href="./control/index.php?chucnang=view">Giỏ hàng</a></li>
-                        <li><a href="./views/Invoice/hoadon.php">Hóa đơn</a></li>
-                        <li><a href="./control/index.php?chucnang=logout">Đăng xuất</a></li>
+                        <li><a href="../../control/index.php?chucnang=view">Giỏ hàng</a></li>
+                        <li><a href="../../views/Invoice/hoadon.php">Hóa đơn</a></li>
+                        <li><a href="../../control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
-                        <li><a href="./control/index.php?chucnang=login">Đăng nhập</a></li>
-                        <li><a href="./control/index.php?chucnang=dangki">Đăng ký</a></li>
+                        <li><a href="../../control/index.php?chucnang=login">Đăng nhập</a></li>
+                        <li><a href="../../control/index.php?chucnang=dangki">Đăng ký</a></li>
                     <?php } ?>
                 </ul>
             </i>
@@ -776,19 +779,19 @@ footer {
         <ul class="nav-list">
             <li><a href="#">Trang Chủ</a></li>
             <li class="dropdown">
-                <a href="./views/menu/menu1.php " class="nav-link">Menu</a>  
+                <a href="#" class="nav-link">Menu</a>  
                 <div class="dropdown-content">
                     <div class="submenu">
                         <h4>THỨC UỐNG</h4>
                         <ul>
-                            <li><a href="./views/menu/menu1.php">Trà Sữa</a></li>
-                            <li><a href="./views/menu/menu2.php">Coffe</a></li>
-                            <li><a href="./views/menu/menu3.php">Trà Hoa Quả Đặt Biệt</a></li>
-                            <li><a href="./views/menu/menu4.php">OLong</a></li>
-                            <li><a href="./views/menu/menu5.php">Sữa Tươi</a></li>
-                            <li><a href="./views/menu/menu6.php">Trà Trái Cây</a></li>
-                            <li><a href="./views/menu/menu7.php">Món Nóng</a></li>
-                            <li><a href="./views/menu/menu8.php">Đá Xay</a></li>
+                            <li>Trà sữa</li>
+                            <li>Best </li>
+                            <li>Trà trái cây</li>
+                            <li>Trà sữa</li>
+                            <li>Kem silky</li>
+                            <li>Cà phê</li>
+                            <li>Đá xay</li>
+                            <li>Bst kim cúc mộc tê</li>
                         </ul>
                     </div>
                    
@@ -800,15 +803,12 @@ footer {
                     <div class="submenu">
                         <h4>TRÀ</h4>
                         <ul>
-                            <li>Lục Trà </li>
-                            <li>Trà OLong</li>
-                        </ul>
-                    </div>
-                    <div class="submenu">
-                        <h4>COFFEE</h4>
-                        <ul>
-                            <li>Cà Phê Phin</li>
-                            <li>Cà Phê Hạt</li>
+                            <li>Trà hộp giấy</li>
+                            <li>Trà gói cao</li>
+                            <li>Trà túi lọc</li>
+                            <li>Trà trà tam giác</li>
+                            <li>Trà lài</li>
+                            <li>Trà xanh </li>
                         </ul>
                     </div>
                 </div>
@@ -827,249 +827,134 @@ footer {
             <li><a href="#">Hỗ Trợ</a></li>
         </ul>
     </nav>
-<div class="slideshow-container">
-    <div class="mySlides slide-left">
-        <img src="./img/baner3.jpg" style="width:100%; height:500px;">
-    </div>
-    
-    <div class="mySlides slide-left">
-        <img src="img/BANNER-V1.5.jpg" style="width:100%; height:500px;">
-    </div>
-    
-    <div class="mySlides slide-left">
-        <img src="./img/baner2.jpg" style="width:100%; height:500px;">
-    </div>
-</div>
-
-<br>
-
-<div style="text-align:center">
-    <span class="dot" onclick="currentSlide(1)"></span> 
-    <span class="dot" onclick="currentSlide(2)"></span> 
-    <span class="dot" onclick="currentSlide(3)"></span> 
-</div>
-<section class="customer-service-section">
-    <div class="container">
-        <div class="service-item">
-            <img src="./img/customer1.png" alt="Customer Service Icon" class="service-icon">
-            <div class="service-text">
-                <p>CHĂM SÓC KHÁCH HÀNG</p>
-                <p>0962 455 517</p>
-            </div>
-        </div>
-        <div class="service-item">
-            <img src="./img/customer2.png" alt="Delivery Icon" class="service-icon">
-            <div class="service-text">
-                <p>GIAO HÀNG</p>
-                <p>Giao hàng nhanh chóng</p>
-            </div>
-        </div>
-        <div class="service-item">
-            <img src="./img/customer3.png" alt="Hotline Icon" class="service-icon">
-            <div class="service-text">
-                <p>LIÊN HỆ HOTLINE</p>
-                <p>19008021 (Miễn phí)</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<div class="content">
-    <!-- Best Seller Section -->
-    <h2>TRÀ NỔI BẬT</h2>
-    <div class="product-list">
-    <?php while ($product = mysqli_fetch_assoc($tacasanpham)) { ?>
-    <div class="product-card">
-        <div class="item">
-        <a href="./views/chitietsanpham/chitiet.php?id=<?php echo $product['product_id']; ?>">
-            <img src="./control/<?php echo $product['address']; ?>" style="margin-left: 18px;">
-        </a>
-
-        </div>
-        <div class="description">
-            <h3><?php echo ($product['name_product']); ?></h3>
-            <p><?php echo ($product['price']); ?> ₫</p>
-            <a href="./control/index.php?chucnang=add&product_id=<?php echo $product['product_id']; ?>"><button class="btn-order">🛒 Đặt mua</button></a>
-        </div>
-    </div>
-<?php } ?>
-
-</div>  
- </div>
-
- <div class="container">
-    <h1 class="title">Tin tức & Khuyến mãi</h1>
-    <p class="subtitle">Tin tức & Khuyến mãi của Phúc Long</p> <!-- Thêm dòng này -->
-    <div class="news-section">
-        <!-- Card 1 -->
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 1" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 7004</p>
-                <p class="news-title">ƯU ĐÃI HỘI VIÊN - TẶNG COUPON MIỄN PHÍ SẢN PHẨM MỚI BST...</p>
-            </div>
-        </div>
-        <!-- Card 2 -->
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 2" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 2566</p>
-                <p class="news-title">HAPPY HALLOWEEN - TẶNG COUPON MUA 1 TẶNG 1</p>
-            </div>
-        </div>
-        <!-- Card 3 -->
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 3" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 5822</p>
-                <p class="news-title">ƯU ĐÃI CHO HỘI VIÊN - TẶNG COUPON MUA 1 TẶNG 1</p>
-            </div>
-        </div>
-        <!-- Card 4 -->
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 4" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 2866</p>
-                <p class="news-title">ƯU ĐÃI BÁNH TRUNG THU ĐẾN 15% DÀNH RIÊNG CHO HỘI VIÊN</p>
-            </div>
-        </div>
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 4" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 2866</p>
-                <p class="news-title">ƯU ĐÃI BÁNH TRUNG THU ĐẾN 15% DÀNH RIÊNG CHO HỘI VIÊN</p>
-            </div>
-        </div>
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 4" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 2866</p>
-                <p class="news-title">ƯU ĐÃI BÁNH TRUNG THU ĐẾN 15% DÀNH RIÊNG CHO HỘI VIÊN</p>
-            </div>
+    <div class="product-section">
+        <div class="sidebar">
+            <h4>Thức uống</h4>
+            <ul>
+                <li><a href="./menu1.php">Trà Sữa</a></li>
+                <li><a href="./menu2.php">Coffe</a></li>
+                <li><a href="./menu3.php">Trà Hoa Quả Đặt Biệt</a></li>
+                <li><a href="./menu4.php">OLong</a></li>
+                <li><a href="./menu5.php">Sữa Tươi</a></li>
+                <li><a href="./menu6.php">Trà Trái Cây</a></li>
+                <li><a href="./menu7.php">Món Nóng</a></li>
+                <li><a href="./menu8.php">Đá Xay</a></li>
+            </ul>
         </div>
         
-    </div>
-</div>
-
-
-<section class="partners-section">
-    <div class="container">
-        <h2>Đối tác đồng hành</h2>
-        <p>Những đơn vị uy tín mà chúng tôi đang hợp tác chung</p>
-        <div class="partners">
-            <div class="partner">
-                <img src="./img//partners1.png" alt="Grab Food">
-            </div>
-            <div class="partner">
-                <img src="./img//partners2.png" alt="Shopee Food">
-            </div>
-            <div class="partner">
-                <img src="./img//partners3.jpg" alt="Gojek">
-            </div>
-            <div class="partner">
-                <img src="./img//partners4.jpg" alt="Be">
+        <div class="product-container">
+            <h2>Sữa Tươi</h2>
+            
+            <div class="product-container">
+<?php while ($product = mysqli_fetch_assoc($tacasanpham)) { ?>
+                <!--Sản Phẩm 1-->
+                <div class="product-card" >
+                    <div >
+                    <a href="../../views/chitietsanpham/chitiet.php?id=<?php echo $product['product_id']; ?>">
+                            <img src="../../control/<?php echo $product['address']; ?>">
+                        </a>
+                    </div>
+                    <div class="description">
+                    <h3><?php echo ($product['name_product']); ?></h3>
+            <p><?php echo ($product['price']); ?> ₫</p>
+            <a href="../../control/index.php?chucnang=add&product_id=<?php echo $product['product_id']; ?>"><button class="btn-order">🛒 Đặt mua</button></a>
+                    </div>
+                </div>
+                <?php } ?>
             </div>
         </div>
     </div>
-</section>
+    
+    </div>
+      <!-- Full tên đồ uống sau dấu ... -->
+    <div id="tooltip" class="tooltip"></div>  
+    <script src="Menu.js"></script>
 
-
-
- <footer style="background-color: #007a2a; color: white; padding: 20px; font-size: 15px; line-height: 1.6;">
-    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-      <!-- Phần địa chỉ -->
-      <div style="flex: 1 1 300px; min-width: 300px;">
-        <h4 style="font-size: 17px; margin-bottom: 10px;">ĐỊA CHỈ</h4>
-        <p style="margin-bottom: 10px;">
-          Trụ sở chính: Công ty Cổ Phần Phúc Long Heritage - ĐKKD: 0316 871719 do sở KHĐT TPHCM cấp lần đầu ngày 21/05/2021<br>
-          Nhà máy: D_8D_CN Đường XE 1, Khu Công Nghiệp Mỹ Phước III, phường Mỹ Phước, thị xã Bến Cát, tỉnh Bình Dương, Việt Nam.<br>
-          Địa chỉ: Phòng 702, Tầng 7, Tòa nhà Central Plaza, số 17 Lê Duẩn, phường Bến Nghé, quận 1, Hồ Chí Minh.
-        </p>
-        <p style="margin-bottom: 10px;">
-          Hotline Đặt hàng: <b>1800 6779</b><br>
-          Hotline Công ty: <b>1900 2345 18</b> (Bấm phím 0: Lễ Tân | phím 1: CSKH)<br>
-          Email: <a href="mailto:sales@phuclong.masangroup.com" style="color: white;">sales@phuclong.masangroup.com</a>, <a href="mailto:info2@phuclong.masangroup.com" style="color: white;">info2@phuclong.masangroup.com</a>
-        </p>
+    <!-- Footter -->
+    <footer style="background-color: #007a2a; color: white; padding: 20px; font-size: 15px; line-height: 1.6;">
+        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+          <!-- Phần địa chỉ -->
+          <div style="flex: 1 1 300px; min-width: 300px;">
+            <h4 style="font-size: 17px; margin-bottom: 10px;">ĐỊA CHỈ</h4>
+            <p style="margin-bottom: 10px;">
+              Trụ sở chính: Công ty Cổ Phần Phúc Long Heritage - ĐKKD: 0316 871719 do sở KHĐT TPHCM cấp lần đầu ngày 21/05/2021<br>
+              Nhà máy: D_8D_CN Đường XE 1, Khu Công Nghiệp Mỹ Phước III, phường Mỹ Phước, thị xã Bến Cát, tỉnh Bình Dương, Việt Nam.<br>
+              Địa chỉ: Phòng 702, Tầng 7, Tòa nhà Central Plaza, số 17 Lê Duẩn, phường Bến Nghé, quận 1, Hồ Chí Minh.
+            </p>
+            <p style="margin-bottom: 10px;">
+              Hotline Đặt hàng: <b>1800 6779</b><br>
+              Hotline Công ty: <b>1900 2345 18</b> (Bấm phím 0: Lễ Tân | phím 1: CSKH)<br>
+              Email: <a href="mailto:sales@phuclong.masangroup.com" style="color: white;">sales@phuclong.masangroup.com</a>, <a href="mailto:info2@phuclong.masangroup.com" style="color: white;">info2@phuclong.masangroup.com</a>
+            </p>
+          </div>
+      
+          <!-- Các danh mục -->
+          <div style="flex: 2 1 600px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            <!-- Cột 1 -->
+            <div>
+              <h4 style="font-size: 17px; margin-bottom: 8px;">CÔNG TY</h4>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="margin-bottom: 8px;"><a href="/gioi-thieu" style="color: white; text-decoration: none;">Giới thiệu công ty</a></li>
+                <li style="margin-bottom: 8px;"><a href="/thu-vien-hinh-anh" style="color: white; text-decoration: none;">Thư viện hình ảnh</a></li>
+                <li style="margin-bottom: 8px;"><a href="/lien-he" style="color: white; text-decoration: none;">Liên hệ</a></li>
+              </ul>
+            </div>
+      
+            <div>
+              <h4 style="font-size: 17px; margin-bottom: 8px;">TUYỂN DỤNG</h4>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="margin-bottom: 8px;"><a href="/tuyen-dung/htch" style="color: white; text-decoration: none;">HTCH</a></li>
+                <li style="margin-bottom: 8px;"><a href="/tuyen-dung/kiosk" style="color: white; text-decoration: none;">Kiosk</a></li>
+                <li style="margin-bottom: 8px;"><a href="/tuyen-dung/van-phong" style="color: white; text-decoration: none;">Văn phòng</a></li>
+                <li style="margin-bottom: 8px;"><a href="/tuyen-dung/nha-may" style="color: white; text-decoration: none;">Nhà máy</a></li>
+              </ul>
+            </div>
+      
+            <div>
+              <h4 style="font-size: 17px; margin-bottom: 8px;">KHUYẾN MÃI</h4>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+    <li style="margin-bottom: 8px;"><a href="/khuyen-mai" style="color: white; text-decoration: none;">Tin khuyến mãi</a></li>
+              </ul>
+            </div>
+      
+            <!-- Cột 2 -->
+            <div>
+              <h4 style="font-size: 17px; margin-bottom: 8px;">CỬA HÀNG</h4>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="margin-bottom: 8px;"><a href="/cua-hang" style="color: white; text-decoration: none;">Danh sách cửa hàng</a></li>
+              </ul>
+            </div>
+      
+            <div>
+              <h4 style="font-size: 17px; margin-bottom: 8px;">HỘI VIÊN</h4>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="margin-bottom: 8px;"><a href="/hoi-vien/faq" style="color: white; text-decoration: none;">Câu hỏi thường gặp (FAQ)</a></li>
+                <li style="margin-bottom: 8px;"><a href="/hoi-vien/dieu-khoan-chuong-trinh" style="color: white; text-decoration: none;">Điều khoản và điều kiện chương trình hội viên</a></li>
+                <li style="margin-bottom: 8px;"><a href="/hoi-vien/dieu-khoan-the-tra-truoc" style="color: white; text-decoration: none;">Điều khoản & Điều kiện Thẻ trả trước</a></li>
+              </ul>
+            </div>
+      
+            <div>
+              <h4 style="font-size: 17px; margin-bottom: 8px;">ĐIỀU KHOẢN SỬ DỤNG</h4>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="margin-bottom: 8px;"><a href="/dieu-khoan/chinh-sach-bao-mat" style="color: white; text-decoration: none;">Chính sách bảo mật thông tin</a></li>
+                <li style="margin-bottom: 8px;"><a href="/dieu-khoan/chinh-sach-dat-hang" style="color: white; text-decoration: none;">Chính sách đặt hàng</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      
+       <!-- Phần cuối -->
+    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; font-size: 16px;">
+        <p>© Công ty CP Phúc Long Heritage 2024</p>
+        <div>
+          <img src="http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png" alt="Đã thông báo Bộ Công Thương" style="height: 40px; margin-right: 15px;">
+          <a href="#"><img src="/img/IG.jpg" alt="Instagram" style="height: 30px;"></a>
+          <a href="#"><img src="/img/Face.jpg" alt="Facebook" style="height: 30px; margin: 0 15px;"></a>
+          <a href="#"><img src="/img/youtube.jpg" alt="YouTube" style="height: 30px;"></a>
+        </div>
       </div>
-  
-      <!-- Các danh mục -->
-      <div style="flex: 2 1 600px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-        <!-- Cột 1 -->
-        <div>
-          <h4 style="font-size: 17px; margin-bottom: 8px;">CÔNG TY</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 8px;"><a href="/gioi-thieu" style="color: white; text-decoration: none;">Giới thiệu công ty</a></li>
-            <li style="margin-bottom: 8px;"><a href="/thu-vien-hinh-anh" style="color: white; text-decoration: none;">Thư viện hình ảnh</a></li>
-            <li style="margin-bottom: 8px;"><a href="/lien-he" style="color: white; text-decoration: none;">Liên hệ</a></li>
-          </ul>
-        </div>
-  
-        <div>
-          <h4 style="font-size: 17px; margin-bottom: 8px;">TUYỂN DỤNG</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 8px;"><a href="/tuyen-dung/htch" style="color: white; text-decoration: none;">HTCH</a></li>
-            <li style="margin-bottom: 8px;"><a href="/tuyen-dung/kiosk" style="color: white; text-decoration: none;">Kiosk</a></li>
-            <li style="margin-bottom: 8px;"><a href="/tuyen-dung/van-phong" style="color: white; text-decoration: none;">Văn phòng</a></li>
-            <li style="margin-bottom: 8px;"><a href="/tuyen-dung/nha-may" style="color: white; text-decoration: none;">Nhà máy</a></li>
-          </ul>
-        </div>
-  
-        <div>
-          <h4 style="font-size: 17px; margin-bottom: 8px;">KHUYẾN MÃI</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 8px;"><a href="/khuyen-mai" style="color: white; text-decoration: none;">Tin khuyến mãi</a></li>
-          </ul>
-        </div>
-  
-        <!-- Cột 2 -->
-        <div>
-          <h4 style="font-size: 17px; margin-bottom: 8px;">CỬA HÀNG</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 8px;"><a href="/cua-hang" style="color: white; text-decoration: none;">Danh sách cửa hàng</a></li>
-          </ul>
-        </div>
-  
-        <div>
-          <h4 style="font-size: 17px; margin-bottom: 8px;">HỘI VIÊN</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 8px;"><a href="/hoi-vien/faq" style="color: white; text-decoration: none;">Câu hỏi thường gặp (FAQ)</a></li>
-            <li style="margin-bottom: 8px;"><a href="/hoi-vien/dieu-khoan-chuong-trinh" style="color: white; text-decoration: none;">Điều khoản và điều kiện chương trình hội viên</a></li>
-            <li style="margin-bottom: 8px;"><a href="/hoi-vien/dieu-khoan-the-tra-truoc" style="color: white; text-decoration: none;">Điều khoản & Điều kiện Thẻ trả trước</a></li>
-          </ul>
-        </div>
-  
-        <div>
-          <h4 style="font-size: 17px; margin-bottom: 8px;">ĐIỀU KHOẢN SỬ DỤNG</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 8px;"><a href="/dieu-khoan/chinh-sach-bao-mat" style="color: white; text-decoration: none;">Chính sách bảo mật thông tin</a></li>
-            <li style="margin-bottom: 8px;"><a href="/dieu-khoan/chinh-sach-dat-hang" style="color: white; text-decoration: none;">Chính sách đặt hàng</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  
-   <!-- Phần cuối -->
-<div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; font-size: 16px;">
-    <p>© Công ty CP Phúc Long Heritage 2024</p>
-    <div>
-      <img src="http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png" alt="Đã thông báo Bộ Công Thương" style="height: 40px; margin-right: 15px;">
-      <a href="#"><img src="./img//inta.png" alt="Instagram" style="height: 30px;"></a>
-      <a href="#"><img src="./img//face.png" alt="Facebook" style="height: 30px; margin: 0 15px;"></a>
-      <a href="#"><img src="./img//youtube.png" alt="YouTube" style="height: 30px;"></a>
-    </div>
-  </div>
-  </footer>
-  
-  
-  
+      </footer>
+    
 </body>
 </html>
-
-
-        

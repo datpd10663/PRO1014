@@ -274,30 +274,83 @@
                                     }
                                     break;     
                                     case 'add':
-                                        // Kiểm tra người dùng đã đăng nhập chưa
                                         if (!isset($_SESSION['user_id'])) {
-                                            echo "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.";
+                                            echo "Bạn cần đăng nhập để thực hiện thao tác này.";
                                             exit;
                                         }
-                            
-                                        $user_id = $_SESSION['user_id']; // Lấy ID người dùng từ session
-                            
+                                    
+                                        $user_id = $_SESSION['user_id']; // ID người dùng
+                                    
+                                        // Nếu có dữ liệu từ URL (GET), xử lý cho trường hợp "Đặt mua" trên trang chính
+                                        if (isset($_GET['product_id'])) {
+                                            $product_id = intval($_GET['product_id']);
+                                        
+                                            // Thêm sản phẩm vào bảng ProductDetail với thông tin mặc định
+                                            $default_size = 'L';
+                                            $default_sweetness = 'Bình thường';
+                                            $default_ice = 'Bình thường';
+                                        
+                                            $sql_detail = "INSERT INTO ProductDetail (product_id, size, sweetness_level, ice_level) 
+                                                           VALUES (?, ?, ?, ?)";
+                                            $stmt_detail = $conn->prepare($sql_detail);
+                                            $stmt_detail->bind_param("isss", $product_id, $default_size, $default_sweetness, $default_ice);
+                                        
+                                            if ($stmt_detail->execute()) {
+                                                $stmt_detail->close();
+                                        
+                                                // Thêm sản phẩm trực tiếp vào giỏ hàng với thông tin mặc định
+                                                $sql_cart = "SELECT cart_id FROM Cart WHERE user_id = ?";
+                                                $stmt_cart = $conn->prepare($sql_cart);
+                                                $stmt_cart->bind_param("i", $user_id);
+                                                $stmt_cart->execute();
+                                                $result_cart = $stmt_cart->get_result();
+                                        
+                                                if ($result_cart->num_rows == 0) {
+                                                    $sql_insert_cart = "INSERT INTO Cart (user_id) VALUES (?)";
+                                                    $stmt_insert_cart = $conn->prepare($sql_insert_cart);
+                                                    $stmt_insert_cart->bind_param("i", $user_id);
+                                                    $stmt_insert_cart->execute();
+                                                    $cart_id = $conn->insert_id;
+                                                    $stmt_insert_cart->close();
+                                                } else {
+                                                    $row_cart = $result_cart->fetch_assoc();
+                                                    $cart_id = $row_cart['cart_id'];
+                                                }
+                                                $stmt_cart->close();
+                                        
+                                                // Thêm vào giỏ hàng
+                                                $quantity = 1;
+                                                $sql_insert_item = "INSERT INTO Cart_Item (cart_id, product_id, quantity) VALUES (?, ?, ?)";
+                                                $stmt_insert_item = $conn->prepare($sql_insert_item);
+                                                $stmt_insert_item->bind_param("iii", $cart_id, $product_id, $quantity);
+                                        
+                                                if ($stmt_insert_item->execute()) {
+                                                    $stmt_insert_item->close();
+                                                    header("Location: ../views/cart/cartview.php");
+                                                    exit;
+                                                } else {
+                                                    echo "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.";
+                                                }
+                                            } else {
+                                                echo "Có lỗi xảy ra khi thêm sản phẩm chi tiết mặc định.";
+                                            }
+                                        }
+                                        
+                                        // Nếu dữ liệu đến từ form (POST), xử lý thêm vào giỏ hàng
                                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                                            // Lấy thông tin từ form
                                             $product_id = $_POST['product_id'];
                                             $size = $_POST['size'];
                                             $sweetness = $_POST['sweetness'];
                                             $ice = $_POST['ice'];
-                            
+                                    
                                             // Bước 1: Kiểm tra hoặc tạo mới giỏ hàng
                                             $sql_cart = "SELECT cart_id FROM Cart WHERE user_id = ?";
                                             $stmt_cart = $conn->prepare($sql_cart);
                                             $stmt_cart->bind_param("i", $user_id);
                                             $stmt_cart->execute();
                                             $result_cart = $stmt_cart->get_result();
-                            
+                                    
                                             if ($result_cart->num_rows == 0) {
-                                                // Nếu chưa có giỏ hàng, thêm mới
                                                 $sql_insert_cart = "INSERT INTO Cart (user_id) VALUES (?)";
                                                 $stmt_insert_cart = $conn->prepare($sql_insert_cart);
                                                 $stmt_insert_cart->bind_param("i", $user_id);
@@ -305,58 +358,45 @@
                                                 $cart_id = $conn->insert_id;
                                                 $stmt_insert_cart->close();
                                             } else {
-                                                // Nếu đã có giỏ hàng, lấy cart_id
                                                 $row_cart = $result_cart->fetch_assoc();
                                                 $cart_id = $row_cart['cart_id'];
                                             }
                                             $stmt_cart->close();
-                            
-                                            // Bước 2: Thêm chi tiết sản phẩm vào bảng ProductDetail
-                                            $sql_detail = "INSERT INTO ProductDetail (product_id, size, sweetness_level, ice_level) 
-                                                           VALUES (?, ?, ?, ?)";
-                                            $stmt_detail = $conn->prepare($sql_detail);
-                                            $stmt_detail->bind_param("isss", $product_id, $size, $sweetness, $ice);
-                                            if ($stmt_detail->execute()) {
-                                                $stmt_detail->close();
-                            
-                                                // Bước 3: Thêm sản phẩm vào chi tiết giỏ hàng
-                                                $sql_check_item = "SELECT cart_item_id, quantity FROM Cart_Item 
-                                                                   WHERE cart_id = ? AND product_id = ?";
-                                                $stmt_check_item = $conn->prepare($sql_check_item);
-                                                $stmt_check_item->bind_param("ii", $cart_id, $product_id);
-                                                $stmt_check_item->execute();
-                                                $result_check_item = $stmt_check_item->get_result();
-                            
-                                                if ($result_check_item->num_rows > 0) {
-                                                    // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng
-                                                    $row_item = $result_check_item->fetch_assoc();
-                                                    $new_quantity = $row_item['quantity'] + 1;
-                            
-                                                    $sql_update_item = "UPDATE Cart_Item SET quantity = ? WHERE cart_item_id = ?";
-                                                    $stmt_update_item = $conn->prepare($sql_update_item);
-                                                    $stmt_update_item->bind_param("ii", $new_quantity, $row_item['cart_item_id']);
-                                                    $stmt_update_item->execute();
-                                                    $stmt_update_item->close();
-                                                } else {
-                                                    // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
-                                                    $quantity = 1; // Mặc định số lượng là 1
-                                                    $sql_insert_item = "INSERT INTO Cart_Item (cart_id, product_id, quantity) 
-                                                                        VALUES (?, ?, ?)";
-                                                    $stmt_insert_item = $conn->prepare($sql_insert_item);
-                                                    $stmt_insert_item->bind_param("iii", $cart_id, $product_id, $quantity);
-                                                    $stmt_insert_item->execute();
-                                                    $stmt_insert_item->close();
-                                                }
-                                                $stmt_check_item->close();
-                            
-                                                // Chuyển hướng sau khi thêm thành công
-                                                header("Location: ../views/cart/cartview.php");
-                                                exit;
+                                    
+                                            // Bước 2: Thêm sản phẩm vào bảng `Cart_Item`
+                                            $sql_check_item = "SELECT cart_item_id, quantity FROM Cart_Item 
+                                                               WHERE cart_id = ? AND product_id = ?";
+                                            $stmt_check_item = $conn->prepare($sql_check_item);
+                                            $stmt_check_item->bind_param("ii", $cart_id, $product_id);
+                                            $stmt_check_item->execute();
+                                            $result_check_item = $stmt_check_item->get_result();
+                                    
+                                            if ($result_check_item->num_rows > 0) {
+                                                $row_item = $result_check_item->fetch_assoc();
+                                                $new_quantity = $row_item['quantity'] + 1;
+                                    
+                                                $sql_update_item = "UPDATE Cart_Item SET quantity = ? WHERE cart_item_id = ?";
+                                                $stmt_update_item = $conn->prepare($sql_update_item);
+                                                $stmt_update_item->bind_param("ii", $new_quantity, $row_item['cart_item_id']);
+                                                $stmt_update_item->execute();
+                                                $stmt_update_item->close();
                                             } else {
-                                                echo "Có lỗi xảy ra khi thêm chi tiết sản phẩm.";
+                                                $quantity = 1;
+                                                $sql_insert_item = "INSERT INTO Cart_Item (cart_id, product_id, quantity) 
+                                                                    VALUES (?, ?, ?)";
+                                                $stmt_insert_item = $conn->prepare($sql_insert_item);
+                                                $stmt_insert_item->bind_param("iii", $cart_id, $product_id, $quantity);
+                                                $stmt_insert_item->execute();
+                                                $stmt_insert_item->close();
                                             }
+                                            $stmt_check_item->close();
+                                    
+                                            // Chuyển hướng sau khi thêm thành công
+                                            header("Location: ../views/cart/cartview.php");
+                                            exit;
                                         }
                                         break;
+                                    
                             
                                         case 'view':
                                             if (isset($_SESSION['user_id'])) {
@@ -395,6 +435,7 @@
                                                 }
                                             
                                             case 'remove':
+                                                
                                                 if (isset($_GET['cart_item_id'])) {
                                                     $cart_item_id = $_GET['cart_item_id'];
                                                     if (removeItemFromCart($cart_item_id)) {
@@ -405,37 +446,54 @@
                                                     }
                                                 }
                                                 break;
-                                                // case 'place_order':
-                                                //     // Kiểm tra nếu giỏ hàng không trống
-                                                //     if (isset($_SESSION['cart_items']) && !empty($_SESSION['cart_items'])) {
-                                                //         // Lấy tổng từ session
-                                                //         $cart_total = isset($_SESSION['total']) ? $_SESSION['total'] : 0;
+                                                case 'process_payment':
+                                                    if (!isset($_SESSION['user_id'])) {
+                                                        die("Lỗi: Không tìm thấy user_id trong session.");
+                                                    }
                                                     
-                                                //         $_SESSION['cart_total'] = $cart_total;
-                                                //     } else {
-                                                //         echo "Giỏ hàng trống. Vui lòng thêm sản phẩm vào giỏ hàng.";
-                                                //         exit();
-                                                //     }
+                                                    $user_id = $_SESSION['user_id'];
+                                                    // Kiểm tra giỏ hàng có rỗng không
+                                                    if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
+                                                        echo "Giỏ hàng của bạn hiện tại trống.";
+                                                        exit;
+                                                    }
                                                 
-                                                //     // Lấy thông tin từ người dùng
-                                                //     $user_id = $_SESSION['user_id'];
-                                                //     $address = $_POST['address'];
-                                                //     $total_amount = $_SESSION['cart_total']; // Lấy giá trị từ session
-                                                //     $status = "Pending";
+                                                    $invoice_date = date('Y-m-d');
+                                                    $due_date = date('Y-m-d', strtotime('+7 days'));
+                                                    $address = $_POST['address'];
+                                                    $total_amount = array_sum(array_map(function ($item) {
+                                                        return $item['quantity'] * $item['price'];
+                                                    }, $_SESSION['cart']));
                                                 
-                                                //     // Gọi model để đặt hàng
-                                                //     if (placeOrder($user_id, $address, $total_amount, $status)) {
-                                                //         // Xóa giỏ hàng sau khi đặt hàng thành công
-                                                //         unset($_SESSION['cart_items']);
-                                                //         unset($_SESSION['cart_total']);
+                                                    // Thêm dữ liệu vào bảng Invoice
+                                                    foreach ($_SESSION['cart'] as $item) {
+                                                        $stmt = $conn->prepare("INSERT INTO Invoice (invoice_date, product_id, payment_status, total_amount, due_date, billing_address, user_id)
+                                                                                VALUES (?, ?, 'Pending', ?, ?, ?, ?)");
+                                                        $stmt->bind_param("sidssi", $invoice_date, $item['product_id'], $total_amount, $due_date, $address, $user_id);
+                                                        $stmt->execute();
+
+                                                    }
                                                 
-                                                //         // Chuyển hướng đến trang thành công
-                                                //         header("Location: ../views/order/success.php");
-                                                //         exit();
-                                                //     } else {
-                                                //         echo "Đã xảy ra lỗi khi đặt hàng.";
-                                                //     }
-                                                //     break;
+                                                   
+                                                
+                                                    // Xóa giỏ hàng trong session
+                                                    unset($_SESSION['cart']);
+                                                
+                                                    // Kiểm tra giỏ hàng đã bị xóa chưa
+                                                    if (!isset($_SESSION['cart'])) {
+                                                        echo "Giỏ hàng đã được xóa.";
+                                                    } else {
+                                                        echo "Giỏ hàng chưa được xóa.";
+                                                    }
+                                                
+                                                    // Chuyển hướng đến trang giỏ hàng hoặc trang khác sau khi thanh toán
+                                                    header("Location: ../views/menu/menu");
+                                                    exit(); // Dừng thực thi để đảm bảo không có lỗi xảy ra
+                                                
+                                                default:
+                                                    echo "Chức năng không hợp lệ.";
+                                                    break;
+                                                
                                             }   
                                      }
 

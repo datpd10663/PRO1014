@@ -29,7 +29,7 @@
     <article class="row">
         <section class="col-2 bg-secondary pb-4">
             <figure class="figure mt-3 center">
-                <img src="../img/logo trang.png" class="figure-img img-fluid rounded" alt="...">
+                <img src="../img/logo.jpg" class="figure-img img-fluid rounded" alt="..." style="width: 150px; margin-left: 35px;">
                 <figcaption class="figure-caption text-center text-white font-weight-bold">
                 <?php if (isset($_SESSION['username'])) { ?>
                     <b style=" position:relative; top:-4px; vertical-align: middle; font-weight:400;"> Xin chào - <?php echo $user; ?></b>

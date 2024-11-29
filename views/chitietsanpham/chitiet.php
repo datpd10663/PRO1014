@@ -26,6 +26,53 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $result = $stmt->get_result();
     $sanpham = $result->fetch_assoc();  
 }  
+
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Sau khi xác thực, lưu tên người dùng vào session
+$user = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8') : null;
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// Kiểm tra nếu người dùng đã đăng nhập
+if ($user) {
+    // Lấy user ID từ session
+    $user_id = $_SESSION['user_id'];
+
+    // Truy vấn dữ liệu giỏ hàng từ cơ sở dữ liệu nếu cần
+    $cart_query = "SELECT c.cart_id, ci.cart_item_id, ci.product_id, ci.quantity, p.name_product, p.price, p.address
+                FROM Cart c
+                JOIN Cart_Item ci ON c.cart_id = ci.cart_id
+                JOIN Product p ON ci.product_id = p.product_id
+                WHERE c.user_id = ?";
+    
+    $stmt = $conn->prepare($cart_query);
+    $stmt->bind_param("i", $user_id); // 'i' cho kiểu dữ liệu integer
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $cart_items = $result->fetch_all(MYSQLI_ASSOC);
+
+    $stmt->close();
+} else {
+    $cart_items = $_SESSION['cart']; // Nếu chưa đăng nhập, sử dụng dữ liệu từ session
+}
+
+// Đếm số lượng sản phẩm trong giỏ hàng
+$giohang_count = count($cart_items);
+
+// Chạy truy vấn khác sau khi truy vấn giỏ hàng đã xong
+$sql = 'SELECT * FROM Product';
+$tacasanpham = mysqli_query($conn, $sql);
+
+// Đừng quên đóng kết nối khi đã xong
+$conn->close();
+
+
 ?>
 
 <!DOCTYPE html>

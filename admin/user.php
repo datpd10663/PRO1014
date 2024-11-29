@@ -29,7 +29,7 @@
     <article class="row">
         <section class="col-2 bg-secondary pb-4">
             <figure class="figure mt-3 center">
-                <img src="../img/logo trang.png" class="figure-img img-fluid rounded" alt="...">
+                <img src="../img/logo bee.png" class="figure-img img-fluid rounded" alt="...">
                 <figcaption class="figure-caption text-center text-white font-weight-bold">
                 <?php if (isset($_SESSION['username'])) { ?>
                     <b style=" position:relative; top:-4px; vertical-align: middle; font-weight:400;"> Xin chào - <?php echo $user; ?></b>
@@ -61,16 +61,17 @@
             </nav>
         </section>
         <section class="col-10 bg-light">
-            <h2 class="mt-3">Quản lý Sản Phẩm</h2>
-            <a class="btn btn-success mb-3" href="../control/index.php?chucnang=themmoi">Thêm mới</a>
+            <h2 class="mt-3">Quản lý Tài Khoản</h2>
+            <!--     -->
             <table class="table table-bordered table-hover bg-white">
                 
                 <tr class="table-active">
-                    <td>Mã SP</td>
-                    <td>Tên Sản Phẩm</td>
-                    <td>Hình Ảnh</td>
-                    <td>Giá</td>
-                    <td>Mô Tả</td>
+                    <td>Mã TK</td>
+                    <td>Tên Tài Khoản</td>
+                    <td>Email</td>
+                    <td>Mật Khẩu</td>
+                    <td>Só Điện Thoại</td>
+                    <td>Địa chỉ</td>
                     <td>Hành Động</td>
                 </tr>
                 <?php while ($user = mysqli_fetch_assoc($tacauser)) { ?>
@@ -78,7 +79,10 @@
                 <td><?php echo $user['user_id']; ?></td>
                 <td><?php echo $user['username']; ?></td>
                 <td><?php echo $user['email']; ?></td>
-                <td><?php echo $user['description']; ?></td>
+                <td><?php echo $user['password']; ?></td>
+                <td><?php echo $user['phone_number']; ?></td>
+                <td><?php echo $user['address']; ?></td>
+                
                 <td>
                     <a class="btn btn-info" href="../control/index.php?chucnang=sua&ma=<?php echo $user['user_id']; ?>">Sửa</a>
                     <a class="btn btn-danger" href="../control/index.php?chucnang=xoa&ma=<?php echo $user['user_id']; ?>">Xóa</a>

@@ -8,40 +8,40 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Initialize cart if it's not already set
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-}
+    // Initialize cart if it's not already set
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
 
-// Check if the user is logged in
-$user = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8') : null;
+    // Check if the user is logged in
+    $user = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8') : null;
 
-if ($user) {
-    // Get user ID from session
-    $user_id = $_SESSION['user_id'];
+    if ($user) {
+        // Get user ID from session
+        $user_id = $_SESSION['user_id'];
 
-    // Fetch cart data from the database if necessary
-    $cart_query = "SELECT c.cart_id, ci.cart_item_id, ci.product_id, ci.quantity, p.name_product, p.price
-                   FROM Cart c
-                   JOIN Cart_Item ci ON c.cart_id = ci.cart_id
-                   JOIN Product p ON ci.product_id = p.product_id
-                   WHERE c.user_id = ?";
-    
-    $stmt = $conn->prepare($cart_query);
-    $stmt->bind_param("i", $user_id); // 'i' for integer
-    $stmt->execute();
+        // Fetch cart data from the database if necessary
+        $cart_query = "SELECT c.cart_id, ci.cart_item_id, ci.product_id, ci.quantity, p.name_product, p.price, p.address
+                    FROM Cart c
+                    JOIN Cart_Item ci ON c.cart_id = ci.cart_id
+                    JOIN Product p ON ci.product_id = p.product_id
+                    WHERE c.user_id = ?";
+        
+        $stmt = $conn->prepare($cart_query);
+        $stmt->bind_param("i", $user_id); // 'i' for integer
+        $stmt->execute();
 
-    $result = $stmt->get_result();
-    $cart_items = $result->fetch_all(MYSQLI_ASSOC);
+        $result = $stmt->get_result();
+        $cart_items = $result->fetch_all(MYSQLI_ASSOC);
 
-    $stmt->close();
-    $conn->close();
-} else {
-    $cart_items = $_SESSION['cart']; // If not logged in, use session cart data
-}
+        $stmt->close();
+        $conn->close();
+    } else {
+        $cart_items = $_SESSION['cart']; // If not logged in, use session cart data
+    }
 
-// Count the number of items in the cart
-$giohang_count = count($cart_items);
+    // Count the number of items in the cart
+    $giohang_count = count($cart_items);
 ?>
 
 
@@ -311,23 +311,28 @@ $giohang_count = count($cart_items);
     background-color: #1e8449; /* Màu xanh lá cây đậm tối hơn khi hover */
 }
 
-/* Nút thanh toán trong tóm tắt giỏ hàng */
 .cart-summary button {
-    width: 100%;
-    padding: 8px 16px; /* Giảm padding để nút nhỏ lại */
-    background-color: #229954; /* Màu xanh lá cây đậm hơn */
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px; /* Kích thước chữ nhỏ */
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        font-size: 14px; /* Kích thước chữ */
+        padding: 8px 16px; /* Khoảng cách bên trong */
+        background-color: green; /* Màu nền */
+        color: white; /* Màu chữ */
+        border: none; /* Bỏ đường viền */
+        border-radius: 5px; /* Bo góc */
+        cursor: pointer; /* Hiển thị con trỏ khi di chuột */
+        transition: all 0.3s ease; /* Hiệu ứng khi hover */
+    }
 
-.cart-summary button:hover {
-    background-color: #1e8449; /* Màu xanh lá cây đậm tối hơn khi hover */
-}
+    .cart-summary button:hover {
+        background-color:#00693e; /* Màu nền khi hover */
+    }
 
+    .cart-summary button:active {
+        transform: scale(0.95); /* Hiệu ứng khi nhấn */
+    }
+
+    .cart-summary button + button {
+        margin-left: 10px; /* Khoảng cách giữa các nút */
+    }
     </style>
 </head>
 <body>
@@ -340,7 +345,7 @@ $giohang_count = count($cart_items);
     
     <div class="header-right">
         <div class="icons">
-            <!-- <a href="./control/index.php?chucnang=cart"> -->
+            <a href="../../views/cart/cartview.php">
             <span class="cart-count">🛒 <?php echo $giohang_count; ?></span>
             </a>
         </div>
@@ -352,16 +357,15 @@ $giohang_count = count($cart_items);
         
         <div class="l1">
             <i class="icons">
-            <img src="../../img/profile.png" alt="Profile Icon" class="icon">
-
+                <img src="../../img/profile.png" alt="Profile Icon" class="icon">
                 <ul>
                     <?php if (isset($_SESSION['username'])) { ?>
-                        <li><a href="../control/index.php?chucnang=view">Giỏ hàng</a></li>
+                        <li><a href="../../control/index.php?chucnang=view">Giỏ hàng</a></li>
                         <li><a href="hoadon.php">Hóa đơn</a></li>
                         <li><a href="../../control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
-                        <li><a href="../control/index.php?chucnang=login">Đăng nhập</a></li>
-                        <li><a href="../control/index.php?chucnang=dangki">Đăng ký</a></li>
+                        <li><a href="../../control/index.php?chucnang=login">Đăng nhập</a></li>
+                        <li><a href="../../control/index.php?chucnang=dangki">Đăng ký</a></li>
                     <?php } ?>
                 </ul>
             </i>
@@ -369,6 +373,7 @@ $giohang_count = count($cart_items);
         
     </div>
 </header>
+
     <nav class="navbar">
         <ul class="nav-list">
             <li><a href="#">Trang Chủ</a></li>
@@ -451,7 +456,7 @@ $giohang_count = count($cart_items);
                 <th>Sản phẩm</th>
                 <th>Số lượng</th>
                 <th>Giá</th>
-                <th>Tổng</th>
+                <th>Tạm Tính</th>
                 <th>Hành động</th>
             </tr>
             <?php 
@@ -463,7 +468,12 @@ $giohang_count = count($cart_items);
             $_SESSION['total'] = $total;
             ?>
             <tr>
-                <td><?php echo htmlspecialchars($item['name_product'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td style="display: flex; align-items: center; justify-content: space-between;">
+                            <span style="flex: 1;"><?php echo htmlspecialchars($item['name_product']); ?></span>
+                            <img src="../../control/<?php echo $item['address']; ?>" 
+                                alt="Image of <?php echo htmlspecialchars($item['name_product']); ?>" 
+                                style="width: 100px; height: auto; border-radius: 8px; border: 1px solid #ccc;">
+                            </td>
                 <td>
                     <input type="hidden" name="cart_item_id[]" value="<?php echo $item['cart_item_id']; ?>">
                     <input type="number" name="quantity[]" value="<?php echo $item['quantity']; ?>" min="1">
@@ -482,16 +492,13 @@ $giohang_count = count($cart_items);
     </form>
 
     <div class="cart-summary">
-        <h3>Tóm tắt giỏ hàng</h3>
-        <p>Tổng tiền hàng: <span><?php echo number_format($total, 3, ',', '.') . "đ"; ?></span></p>
-        <p>Tổng thanh toán: <span class="highlight"><?php echo number_format($total, 3, ',', '.') . "đ"; ?></span></p>
-        <button onclick="window.location.href='../order/order.php';">Đặt hàng</button>
-    </div>
-
+    <p>Tổng thanh toán: <span class="highlight"><?php echo number_format($total, 3, ',', '.') . "đ"; ?></span></p>
+    <button onclick="window.location.href='../Invoice/invoice.php';">Thanh Toán</button> 
     <button onclick="window.location.href='../../index.php';">Quay lại menu</button>
+</div>
 <?php else: ?>
     <p>Giỏ hàng của bạn hiện tại trống.</p>
-    <button onclick="window.location.href='../../views/product/list.php';">Quay lại menu</button>
+    <button onclick="window.location.href='../../views/menu/menu1.php';">Quay lại menu</button>
 <?php endif; ?>
     </div>
 </div>
