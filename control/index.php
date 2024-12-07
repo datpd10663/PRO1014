@@ -8,6 +8,7 @@
     require_once('../model/product.php');
     require_once('../model/cart.php');
     include_once('../model/order.php');
+    include_once('../model/danhmuc.php');
 
     if (isset($_GET['chucnang'])) {
         $chucnang = $_GET['chucnang'];
@@ -450,50 +451,231 @@
                                                     if (!isset($_SESSION['user_id'])) {
                                                         die("Lỗi: Không tìm thấy user_id trong session.");
                                                     }
-                                                    
+                                                
                                                     $user_id = $_SESSION['user_id'];
+                                                
                                                     // Kiểm tra giỏ hàng có rỗng không
                                                     if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
                                                         echo "Giỏ hàng của bạn hiện tại trống.";
                                                         exit;
                                                     }
                                                 
+                                                    // Tạo hóa đơn mới
                                                     $invoice_date = date('Y-m-d');
                                                     $due_date = date('Y-m-d', strtotime('+7 days'));
-                                                    $address = $_POST['address'];
+                                                    $address = $_POST['billing_address'];
                                                     $total_amount = array_sum(array_map(function ($item) {
                                                         return $item['quantity'] * $item['price'];
                                                     }, $_SESSION['cart']));
                                                 
-                                                    // Thêm dữ liệu vào bảng Invoice
-                                                    foreach ($_SESSION['cart'] as $item) {
-                                                        $stmt = $conn->prepare("INSERT INTO Invoice (invoice_date, product_id, payment_status, total_amount, due_date, billing_address, user_id)
-                                                                                VALUES (?, ?, 'Pending', ?, ?, ?, ?)");
-                                                        $stmt->bind_param("sidssi", $invoice_date, $item['product_id'], $total_amount, $due_date, $address, $user_id);
-                                                        $stmt->execute();
-
-                                                    }
+                                                    // Thêm hóa đơn vào bảng Invoice
+                                                    $stmt = $conn->prepare("INSERT INTO Invoice (invoice_date, payment_status, total_amount, due_date, billing_address, user_id)
+                                                                            VALUES (?, 'Chưa Thanh Toán', ?, ?, ?, ?)");
+                                                    $stmt->bind_param("sdssi", $invoice_date, $total_amount, $due_date, $address, $user_id);
+                                                    $stmt->execute();
+                                                    $invoice_id = $stmt->insert_id; // Lấy ID của hóa đơn vừa tạo
+                                                    $stmt->close();
                                                 
-                                                   
+                                                    // Thêm các sản phẩm vào bảng Invoice_Detail
+                                                    foreach ($_SESSION['cart'] as $item) {
+                                                        $stmt = $conn->prepare("INSERT INTO Invoice_Detail (invoice_id, product_id, quantity, price, total_price)
+                                                                                VALUES (?, ?, ?, ?, ?)");
+                                                        $total_price = $item['quantity'] * $item['price'];
+                                                        $stmt->bind_param("iiidd", $invoice_id, $item['product_id'], $item['quantity'], $item['price'], $total_price);
+                                                        $stmt->execute();
+                                                    }
+                                                    $stmt->close();
+                                                
+                                                    // Xóa các mục trong bảng Cart_Item của người dùng
+                                                    $stmt = $conn->prepare("DELETE FROM Cart_Item WHERE cart_id = (SELECT cart_id FROM Cart WHERE user_id = ?)");
+                                                    $stmt->bind_param("i", $user_id);
+                                                    $stmt->execute();
+                                                    $stmt->close();
                                                 
                                                     // Xóa giỏ hàng trong session
                                                     unset($_SESSION['cart']);
                                                 
-                                                    // Kiểm tra giỏ hàng đã bị xóa chưa
-                                                    if (!isset($_SESSION['cart'])) {
-                                                        echo "Giỏ hàng đã được xóa.";
-                                                    } else {
-                                                        echo "Giỏ hàng chưa được xóa.";
-                                                    }
-                                                
                                                     // Chuyển hướng đến trang giỏ hàng hoặc trang khác sau khi thanh toán
-                                                    header("Location: ../views/menu/menu");
+                                                    header("Location: ../views/cart/cartview.php");
                                                     exit(); // Dừng thực thi để đảm bảo không có lỗi xảy ra
+                                                    break;
                                                 
                                                 default:
                                                     echo "Chức năng không hợp lệ.";
                                                     break;
-                                                
+                                                    case 'cancel_order':
+                                                        if (!isset($_SESSION['user_id'])) {
+                                                            die("Lỗi: Không tìm thấy user_id trong session.");
+                                                        }
+                                                    
+                                                        $user_id = $_SESSION['user_id'];
+                                                        $invoice_id = isset($_POST['invoice_id']) ? intval($_POST['invoice_id']) : null;
+                                                    
+                                                        if (!$invoice_id) {
+                                                            echo "Lỗi: Mã đơn hàng không hợp lệ.";
+                                                            exit;
+                                                        }
+                                                    
+                                                        // Kiểm tra trạng thái đơn hàng và quyền sở hữu
+                                                        $stmt = $conn->prepare("SELECT payment_status FROM Invoice WHERE invoice_id = ? AND user_id = ?");
+                                                        $stmt->bind_param("ii", $invoice_id, $user_id);
+                                                        $stmt->execute();
+                                                        $result = $stmt->get_result();
+                                                        $invoice = $result->fetch_assoc();
+                                                        $stmt->close();
+                                                    
+                                                        if (!$invoice) {
+                                                            echo "Lỗi: Không tìm thấy đơn hàng.";
+                                                            exit;
+                                                        }
+                                                    
+                                                        if ($invoice['payment_status'] !== 'chưa thanh toán') {
+                                                            echo "Lỗi: Chỉ có thể hủy đơn hàng chưa thanh toán.";
+                                                            exit;
+                                                        }
+                                                    
+                                                        // Xóa các mục chi tiết hóa đơn
+                                                        $stmt = $conn->prepare("DELETE FROM Invoice_Detail WHERE invoice_id = ?");
+                                                        $stmt->bind_param("i", $invoice_id);
+                                                        $stmt->execute();
+                                                        $stmt->close();
+                                                    
+                                                        // Xóa đơn hàng
+                                                        $stmt = $conn->prepare("DELETE FROM Invoice WHERE invoice_id = ?");
+                                                        $stmt->bind_param("i", $invoice_id);
+                                                        $stmt->execute();
+                                                        $stmt->close();
+                                                    
+                                                        echo "Đơn hàng đã được hủy thành công.";
+                                                    
+                                                        // Chuyển hướng về trang danh sách hóa đơn hoặc trang khác
+                                                        header("Location: ../views/Invoice/hoadon.php");
+                                                        exit();
+                                                    
+                                                        break;
+                                                    
+                                                        case 'payment_callback':
+                                                            // Kiểm tra thông tin từ cổng thanh toán
+                                                            if (isset($_POST['invoice_id']) && isset($_POST['payment_status'])) {
+                                                                $invoice_id = $_POST['invoice_id'];
+                                                                $status = $_POST['payment_status'];
+                                                        
+                                                                // Kiểm tra trạng thái thanh toán có hợp lệ không
+                                                                if ($status == 'Thanh toán thành công') {
+                                                                    // Cập nhật trạng thái thanh toán thành công trong database
+                                                                    $stmt = $conn->prepare("UPDATE Invoice SET payment_status = ? WHERE invoice_id = ? AND user_id = ?");
+                                                                    $stmt->bind_param("sii", $status, $invoice_id, $_SESSION['user_id']);
+                                                                    if ($stmt->execute()) {
+                                                                        echo "Cập nhật trạng thái hóa đơn thành công!";
+                                                                    } else {
+                                                                        echo "Lỗi khi cập nhật trạng thái hóa đơn.";
+                                                                    }
+                                                                    $stmt->close();
+                                                                } else {
+                                                                    echo "Thanh toán không thành công hoặc không hợp lệ.";
+                                                                }
+                                                            } else {
+                                                                echo "Thông tin thanh toán không hợp lệ.";
+                                                            }
+                                                            $conn->close();
+                                                            break;
+                                                        
+                                                    case 'hienthidm':
+                                                        $tatcadanhmuc = tatcadanhmuc();
+                                                        include('../admin/danhmuc.php');
+                                                        break;
+                                            
+                                                    case 'themdm':
+                                                        include('../admin/themdanhmuc.php');
+                                                        break;
+                                            
+                                                    case 'xulythemdm':
+                                                        if (isset($_POST['category_id'], $_POST['name_category'])) {
+                                                            $tendm = $_POST['name_category'];
+                                                            $madm = $_POST['category_id'];
+                                            
+                                                            $sql = "INSERT INTO category (category_id, name_category) VALUES (?, ?)";
+                                                            $stmt = $conn->prepare($sql);
+                                                            $stmt->bind_param("is", $madm, $tendm);
+                                                            if ($stmt->execute()) {
+                                                                header('Location: index.php?chucnang=hienthidm');
+                                                            } else {
+                                                                echo "Lỗi: " . $stmt->error;
+                                                            }
+                                                            $stmt->close();
+                                                        }
+                                                        break;
+                                            
+                                                    case 'xoadm':
+                                                        if (isset($_GET['ma'])) {
+                                                            $madm = $_GET['ma'];
+                                                    
+                                                            // Truy vấn thông tin sản phẩm từ database
+                                                            $sql = "SELECT * FROM category WHERE category_id = ?";
+                                                            $stmt = $conn->prepare($sql);
+                                                            $stmt->bind_param("i", $madm);
+                                                            $stmt->execute();
+                                                            $result = $stmt->get_result();
+                                                    
+                                                            if ($result->num_rows > 0) {
+                                                                $danhmuc = $result->fetch_assoc();
+                                                            } else {
+                                                                echo "Không tìm thấy sản phẩm cần xóa.";
+                                                                exit;
+                                                            }
+                                                            $stmt->close();
+                                                    
+                                                            // Hiển thị giao diện xác nhận xóa
+                                                            include('../admin/xoadanhmuc.php');
+                                                        } else {
+                                                            echo "Mã sản phẩm không hợp lệ.";
+                                                            exit;
+                                                        }
+                                                        break;
+                                                    case 'xulyxoadm':
+                                                        if (isset($_POST['macanxoa'], $_POST['xacnhan'])) {
+                                                            if ($_POST['xacnhan'] == 'xoa') {
+                                                                xoadm($_POST['macanxoa']);
+                                                                header('Location: ../admin/danhmuc.php');
+                                                                exit;
+                                                            }
+                                                            if ($_POST['xacnhan'] == 'huy') {
+                                                                header('Location: ../admin/danhmuc.php');
+                                                                exit;
+                                                            }
+                                                        }
+                                            
+                                                    case 'suadm':
+                                                        if (isset($_GET['ma'])) {
+                                                            $ma_danhmuc = $_GET['ma'];
+                                                            $sql = "SELECT * FROM category WHERE category_id = ?";
+                                                            $stmt = $conn->prepare($sql);
+                                                            $stmt->bind_param("s", $ma_danhmuc);
+                                                            $stmt->execute();
+                                                            $result = $stmt->get_result();
+                                                            $danhmuc = $result->fetch_assoc();
+                                                            $stmt->close();
+                                                        }
+                                                        include('../admin/suadanhmuc.php');
+                                                        break;
+                                            
+                                                    case 'xulysuadm':
+                                                        if (isset($_GET['ma'])) {
+                                                            $ma_danhmuc = $_GET['ma'];
+                                                            if (isset($_POST['name_category'])) {
+                                                                $sql = "UPDATE category SET name_category = ? WHERE category_id = ?";
+                                                                $stmt = $conn->prepare($sql);
+                                                                $stmt->bind_param("ss", $_POST['name_category'], $ma_danhmuc);
+                                                                if ($stmt->execute()) {
+                                                                    header('Location: index.php?chucnang=hienthidm');
+                                                                } else {
+                                                                    echo "Lỗi cập nhật: " . $stmt->error;
+                                                                }
+                                                                $stmt->close();
+                                                            }
+                                                        }
+                                                        break;
+                                                       
                                             }   
                                      }
 

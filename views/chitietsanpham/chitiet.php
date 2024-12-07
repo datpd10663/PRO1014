@@ -84,7 +84,7 @@ $conn->close();
    <link rel="stylesheet" href="./chitiet1.css">
     <script src="./script.js"></script>
     <style>
-        .logo{
+       .logo{
             width: 100px;
             margin-right: 10px;
         }
@@ -115,6 +115,10 @@ $conn->close();
     display: flex;
     align-items: center;
 }
+.header-left img {
+    width: 300px;
+}
+
 
 .search-bar {
     width: 300px;
@@ -150,6 +154,7 @@ $conn->close();
 .icons {
     display: flex;
     align-items: center;
+    text-decoration: none;
 
 }
 
@@ -161,7 +166,9 @@ $conn->close();
 }
 
 
-
+a{
+    text-decoration: none;
+}
 /* Navbar styling */
 .navbar {
     background-color: #fff;
@@ -217,7 +224,7 @@ $conn->close();
 }
 
 .submenu h4 {
-    color: #00693e;
+    color: black;
     font-size: 16px;
     margin-bottom: 10px;
 }
@@ -432,7 +439,7 @@ $conn->close();
 .item {
     width: 100%;
     padding: 10px;
-    border-radius: 8px;
+    border-radius: 8px ;
     overflow: hidden;
     display: flex;
     justify-content: center; /* Căn giữa theo chiều ngang */
@@ -460,7 +467,7 @@ $conn->close();
 
 /* Button styling */
 .product-card .add-to-cart {
-    background-color: #006400;
+    background-color: #FFA500; /* Orange color */
     color: white;
     padding: 10px 0;
     border-radius: 5px;
@@ -477,12 +484,33 @@ $conn->close();
 }
 
 .product-card .add-to-cart:hover {
-    background-color: #004d00;
+    background-color: #FF8C00; /* Darker orange on hover */
+}
+.btn-order {
+    background-color: #FFA500; /* Orange background */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    border: none;
+    text-transform: none;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.btn-order:hover {
+    background-color: #FF8C00; /* Darker orange on hover */
 }
 
 /* Heading styling */
 h2 {
-    color: #006400;
+    color: black;
     margin-bottom: 20px;
     font-size: 24px;
     text-align: center;
@@ -492,7 +520,7 @@ h2 {
 .product-card p {
     font-size: 16px;
     font-weight: bold;
-    color: #006400; /* Green color for price */
+    color: black; /* Green color for price */
     margin: 5px 0 15px 0;
 }
 
@@ -629,7 +657,7 @@ h2 {
     white-space: nowrap;
 }
 footer {
-    background-color: #007a2a;
+    background-color: black;
     color: white;
     padding: 20px;
     font-size: 15px;
@@ -677,7 +705,7 @@ footer {
 }
 .user-greeting {
     font-size: 14px;
-    color: #00693e;
+    color: black;
     margin-left: 10px;
 }
 .l1 {
@@ -732,7 +760,7 @@ footer {
 
 /* Hover effect for the links */
 .l1 ul li a:hover {
-    color: #00693e;  /* Green color on hover */
+    color: darkorange;  /* Green color on hover */
 }
 
 /* Change background color of menu items when hovering */
@@ -752,12 +780,248 @@ footer {
 .l1 .icon:hover {
     transform: scale(1.1); /* Slightly increase the size of the icon when hovered */
 }
+/* Thay đổi màu chữ menu khi hover */
+.nav-list a:hover {
+    color: #FFD700; /* Màu vàng khi hover */
+}
+.product-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start; /* Align items to start */
+    margin: 40px 0; /* Increased margin for better separation */
+    border: 1px solid #e0e0e0; /* Light border around the container */
+    border-radius: 10px; /* Rounded corners for the container */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    overflow: hidden; /* Prevent overflow of child elements */
+}
+
+.product-image {
+    flex: 1; /* Allow image section to grow */
+    padding: 20px; /* Padding around the image */
+    background-color: #f9f9f9; /* Light background for contrast */
+}
+
+.product-image img {
+    width: 100%; /* Full width for responsiveness */
+    max-width: 100%; /* Ensure it doesn't exceed the container */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px; /* Rounded corners for the image */
+}
+
+.product-content {
+    flex: 2; /* Allow content section to grow more */
+    padding: 20px; /* Added padding for spacing */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: space-between; /* Space out elements */
+    background-color: #ffffff; /* White background for content */
+}
+
+.product-info h2 {
+    font-size: 28px; /* Increased font size */
+    color: #333; /* Darker color for better readability */
+    margin-bottom: 15px; /* Space below the heading */
+}
+
+.product-info p {
+    font-size: 16px; /* Standard font size for description */
+    color: #666; /* Softer color for description */
+    margin-bottom: 20px; /* Space below the description */
+}
+
+.price-quantity {
+    display: flex;
+    justify-content: space-between; /* Space between price and quantity */
+    align-items: center; /* Center align items vertically */
+    margin: 15px 0; /* Added margin for spacing */
+}
+
+.price {
+    font-size: 24px; /* Larger font for price */
+    font-weight: bold; /* Bold for emphasis */
+    color: #006400; /* Green color for price */
+}
+
+.quantity-label {
+    font-size: 16px; /* Standard font size for quantity label */
+    color: #333; /* Darker color for better readability */
+}
+
+.add-to-cart {
+    margin-top: auto; /* Push to the bottom of the product content */
+    text-align: center; /* Center the button within the container */
+    padding: 15px; /* Add padding around the container */
+    background-color: #f9f9f9; /* Light background for contrast */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+}
+
+.add-to-cart button {
+    background-color: #006400; /* Green background */
+    color: white; /* White text */
+    padding: 12px 20px; /* Padding for the button */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size for the button text */
+    font-weight: bold; /* Bold text for emphasis */
+    cursor: pointer; /* Pointer cursor on hover */
+    border: none; /* Remove default border */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+    width: 100%; /* Full width for the button */
+}
+
+.add-to-cart button:hover {
+    background-color: #004d00; /* Darker green on hover */
+    transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+.add-to-cart button:active {
+    transform: translateY(0); /* Reset lift effect on click */
+}
+label {
+    font-size: 18px; /* Increased font size for labels */
+    color: #333; /* Darker color for better readability */
+    margin-bottom: 10px; /* Space below the label */
+    display: block; /* Make labels block elements */
+}
+
+.size-options, .sweet-options, .ice-options {
+    display: flex; /* Use flexbox for alignment */
+    gap: 20px; /* Space between options */
+    margin-bottom: 30px; /* Space below each option group */
+}
+
+.size-options label, .sweet-options label, .ice-options label {
+    display: flex; /* Align label and input in a row */
+    align-items: center; /* Center align items vertically */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s; /* Smooth background transition */
+    padding: 8px 12px; /* Padding for better clickable area */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.size-options label:hover, .sweet-options label:hover, .ice-options label:hover {
+    background-color: #f0f0f0; /* Light background on hover */
+}
+
+input[type="radio"] {
+    margin-right: 8px; /* Space between radio button and label text */
+    accent-color: #006400; /* Change the color of the radio button (modern browsers) */
+}
+body {
+    font-family: Arial, sans-serif; /* Set a default font */
+    background-color: #f4f4f4; /* Light background for the body */
+    margin: 0; /* Remove default margin */
+    padding: 20px; /* Add padding around the body */
+}
+
+.product-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start; /* Align items to the start */
+    margin: 40px auto; /* Center the container with margin */
+    max-width: 1200px; /* Limit max width */
+    background-color: #ffffff; /* White background for the product container */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    overflow: hidden; /* Prevent overflow of child elements */
+}
+
+.product-image {
+    flex: 1; /* Allow image section to grow */
+    padding: 20px; /* Padding around the image */
+}
+
+.product-image img {
+    width: 100%; /* Full width for responsiveness */
+    max-width: 100%; /* Ensure it doesn't exceed the container */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px; /* Rounded corners for the image */
+}
+
+.product-content {
+    flex: 2; /* Allow content section to grow more */
+    padding: 20px; /* Added padding for spacing */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+}
+
+.product-info h2 {
+    font-size: 28px; /* Increased font size */
+    color: #333; /* Darker color for better readability */
+    margin-bottom: 15px; /* Space below the heading */
+}
+
+.product-info p {
+    font-size: 16px; /* Standard font size for description */
+    color: #666; /* Softer color for description */
+    margin-bottom: 20px; /* Space below the description */
+}
+
+.price-quantity {
+    display: flex;
+    justify-content: space-between; /* Space between price and quantity */
+    margin: 15px 0; /* Added margin for spacing */
+}
+
+.price {
+    font-size: 24px; /* Larger font for price */
+    font-weight: bold; /* Bold for emphasis */
+    color: #006400; /* Green color for price */
+}
+
+label {
+    font-size: 18px; /* Increased font size for labels */
+    color: #333; /* Darker color for better readability */
+    margin-bottom: 10px; /* Space below the label */
+    display: block; /* Make labels block elements */
+}
+
+.size-options, .sweet-options, .ice-options {
+    display: flex; /* Use flexbox for alignment */
+    gap: 20px; /* Space between options */
+    margin-bottom: 30px; /* Space below each option group */
+}
+
+.size-options label, .sweet-options label, .ice-options label {
+    display: flex; /* Align label and input in a row */
+    align-items: center; /* Center align items vertically */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s; /* Smooth background transition */
+    padding: 8px 12px; /* Padding for better clickable area */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.size-options label:hover, .sweet-options label:hover, .ice-options label:hover {
+    background-color: #f0f0f0; /* Light background on hover */
+}
+
+input[type="radio"] {
+    margin-right: 8px; /* Space between radio button and label text */
+    accent-color: #006400; /* Change the color of the radio button (modern browsers) */
+}
+
+.add-to-cart {
+    margin-top: auto; /* Push to the bottom of the product content */
+    text-align: center; /* Center the button within the container */
+    padding: 15px; /* Add padding around the container */
+    background-color: #f9f9f9; /* Light background for contrast */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.add-to-cart button {
+    background-color: #006400; /* Green background */
+    color: white; /* White text */
+    padding: 12px 20px; /* Padding for the button */
+    border-radius: 5px;
+}
     </style>
 </head>
 <body>
 <header class="header">
     <div class="header-left">
-        <img src="../../img/logo đen.png" height="50%" alt="Logo" class="logo">
+        <img src="../../img/logo bee.png" height="50%" width="500px;" alt="Logo" class="logo">
         <input type="text" placeholder="Bạn muốn mua gì..." class="search-bar">
     </div>
     
@@ -795,7 +1059,7 @@ footer {
 
     <nav class="navbar">
         <ul class="nav-list">
-            <li><a href="#">Trang Chủ</a></li>
+            <li><a href="../../index.php">Trang Chủ</a></li>
             <li class="dropdown">
                 <a href="#" class="nav-link">Menu</a>  
                 <div class="dropdown-content">
@@ -875,7 +1139,7 @@ footer {
         <div class="price-quantity">
     <div class="price"><?php echo htmlspecialchars($sanpham['price']); ?> đ</div>
 </div>
-<h1>Chọn chi tiết sản phẩm</h1>
+<h2>Chọn chi tiết sản phẩm</h2>
 <form action="../../control/index.php?chucnang=add" method="POST">
     <!-- Chọn kích cỡ -->
     <label>Chọn kích cỡ:</label>

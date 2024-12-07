@@ -70,7 +70,7 @@
         }
 
         input[type="submit"] {
-            background-color: #28a745; /* Green button */
+            background-color: orange; /* Green button */
             color: #fff;
             font-weight: 600;
             cursor: pointer;
@@ -81,7 +81,7 @@
         }
 
         input[type="submit"]:hover {
-            background-color: #218838; /* Darker green on hover */
+            background-color: darkorange; /* Darker green on hover */
         }
 
         .error,
@@ -132,7 +132,7 @@
     <div class="container">
         <div class="register-container">
             <div class="logo">
-                <img src="../img/logo xanh.png" alt="Gé cafe Logo"> <!-- Ensure the image path is correct -->
+             <!-- Ensure the image path is correct -->
             </div>
             <h1>Đăng ký tài khoản</h1>
             <form action="index.php?chucnang=xulydangki" method="POST">

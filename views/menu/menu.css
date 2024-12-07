@@ -731,7 +731,7 @@ width: 200px;
 }
 
 .submenu h4 {
-color: #00693e;
+color: #0d0d0d;
 font-size: 16px;
 margin-bottom: 10px;
 }
@@ -747,7 +747,7 @@ margin-bottom: 8px;
 }
 
 .submenu ul li:hover {
-color: #00693e; /* Green color on hover */
+color: #0d0d0d; /* Green color on hover */
 cursor: pointer;
 }
 
@@ -964,7 +964,7 @@ object-fit: contain; /* Giữ tỷ lệ hình ảnh */
 .product-card h3 {
 font-size: 16px;
 font-weight: bold;
-color: #da850d; /* Green color for tea names */
+color: #0d0d0d; /* Green color for tea names */
 margin: 10px 0 5px 0;
 text-align: center; /* Căn giữa tên sản phẩm */
 white-space: nowrap;
@@ -974,7 +974,7 @@ text-overflow: ellipsis;
 
 /* Button styling */
 .product-card .add-to-cart {
-background-color: #da850d;
+background-color: #0d0d0d;
 color: white;
 padding: 10px 0;
 border-radius: 5px;
@@ -1035,7 +1035,7 @@ background-color: #b66b02; /* Darker green on hover */
 
 /* Heading styling */
 h2 {
-color: #da850d;
+color: #000000;
 margin-bottom: 20px;
 font-size: 24px;
 text-align: center;
@@ -1060,7 +1060,7 @@ font-style: italic; /* Làm chữ hơi nghiêng để nổi bật */
 
 .title {
 text-align: center;
-color: #da850d;
+color: #010101;
 font-size: 32px;
 margin-bottom: 30px;
 }
@@ -1143,7 +1143,7 @@ margin-left: 10px;
 white-space: nowrap;
 }
 footer {
-background-color: #da850d;
+background-color: #e78d11;
 color: white;
 padding: 20px;
 font-size: 15px;

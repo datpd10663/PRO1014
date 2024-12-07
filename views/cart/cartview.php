@@ -59,6 +59,9 @@ if (session_status() == PHP_SESSION_NONE) {
     position: relative;
     display: inline-block;
 }
+    .header-left img{
+        width: 300px;
+    }
 
 /* Initially hide the login/sign-up menu */
 .l1 ul {
@@ -339,7 +342,7 @@ if (session_status() == PHP_SESSION_NONE) {
      <!--Header-->
      <header class="header">
     <div class="header-left">
-        <img src="../../img/logo đen.png" height="50%" alt="Logo" class="logo">
+        <img src="../../img/logo bee.png" height="50%" alt="Logo" class="logo">
         <input type="text" placeholder="Bạn muốn mua gì..." class="search-bar">
     </div>
     
@@ -361,7 +364,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 <ul>
                     <?php if (isset($_SESSION['username'])) { ?>
                         <li><a href="../../control/index.php?chucnang=view">Giỏ hàng</a></li>
-                        <li><a href="hoadon.php">Hóa đơn</a></li>
+                        <li><a href="../../views/Invoice/hoadon.php">Hóa đơn</a></li>
                         <li><a href="../../control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
                         <li><a href="../../control/index.php?chucnang=login">Đăng nhập</a></li>

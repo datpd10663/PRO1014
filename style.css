@@ -1,4 +1,4 @@
-/* styles.css */
+styles.css
 
 * {
     margin: 0;
@@ -375,7 +375,7 @@
 .product-card .price {
     font-size: 14px;
     font-weight: bold;
-    color: #006400; /* Green color for price */
+    color: #da850d; /* Green color for price */
     margin-bottom: 10px;
 }
 
@@ -386,7 +386,7 @@
 
 /* Button styling */
 .product-card .add-to-cart {
-    background-color: #006400;
+    background-color: #da850d;
     color: white;
     padding: 10px 0;
     border-radius: 5px;
@@ -408,7 +408,7 @@
 
 /* Heading styling */
 h2 {
-    color: #006400;
+    color: #da850d;
     margin-bottom: 20px;
     font-size: 24px;
     text-align: center;
@@ -418,13 +418,13 @@ h2 {
 .product-card p {
     font-size: 16px;
     font-weight: bold;
-    color: #006400; /* Green color for price */
+    color: #da850d; /* Green color for price */
     margin: 5px 0 15px 0;
 }
 
 /* Button styling */
 .btn-order {
-    background-color: #006400; /* Green background */
+    background-color: #da850d; /* Green background */
     color: white;
     padding: 10px 20px; /* Padding for larger button */
     border-radius: 8px; /* Rounded corners */
@@ -442,12 +442,12 @@ h2 {
 }
 
 .btn-order:hover {
-    background-color: #004d00; /* Darker green on hover */
+    background-color: #da850d; /* Darker green on hover */
 }
 
 /* Heading styling */
 h2 {
-    color: #006400;
+    color: #da850d;
     margin-bottom: 20px;
     font-size: 24px;
     text-align: center;

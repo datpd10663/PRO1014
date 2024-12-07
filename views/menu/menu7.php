@@ -57,7 +57,7 @@ if (!$tacasanpham) {
     <link rel="stylesheet" href="menu.css">
     <script src="./script.js"></script>
     <style>
-        .logo{
+              .logo{
             width: 100px;
             margin-right: 10px;
         }
@@ -66,7 +66,7 @@ if (!$tacasanpham) {
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; 
+    box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
 .container {
@@ -197,7 +197,7 @@ a{
 }
 
 .submenu h4 {
-    color: #00693e;
+    color: black;
     font-size: 16px;
     margin-bottom: 10px;
 }
@@ -440,7 +440,7 @@ a{
 
 /* Button styling */
 .product-card .add-to-cart {
-    background-color: #006400;
+    background-color: #FFA500; /* Orange color */
     color: white;
     padding: 10px 0;
     border-radius: 5px;
@@ -457,12 +457,33 @@ a{
 }
 
 .product-card .add-to-cart:hover {
-    background-color: #004d00;
+    background-color: #FF8C00; /* Darker orange on hover */
+}
+.btn-order {
+    background-color: #FFA500; /* Orange background */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    border: none;
+    text-transform: none;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.btn-order:hover {
+    background-color: #FF8C00; /* Darker orange on hover */
 }
 
 /* Heading styling */
 h2 {
-    color: #006400;
+    color: black;
     margin-bottom: 20px;
     font-size: 24px;
     text-align: center;
@@ -472,7 +493,7 @@ h2 {
 .product-card p {
     font-size: 16px;
     font-weight: bold;
-    color: #006400; /* Green color for price */
+    color: black; /* Green color for price */
     margin: 5px 0 15px 0;
 }
 
@@ -609,7 +630,7 @@ h2 {
     white-space: nowrap;
 }
 footer {
-    background-color: #007a2a;
+    background-color: black;
     color: white;
     padding: 20px;
     font-size: 15px;
@@ -657,7 +678,7 @@ footer {
 }
 .user-greeting {
     font-size: 14px;
-    color: #00693e;
+    color: black;
     margin-left: 10px;
 }
 .l1 {
@@ -732,8 +753,39 @@ footer {
 .l1 .icon:hover {
     transform: scale(1.1); /* Slightly increase the size of the icon when hovered */
 }
+/* Thay đổi màu chữ menu khi hover */
+.nav-list a:hover {
+    color: #FFD700; /* Màu vàng khi hover */
+}
 
-  
+/* Thay đổi màu nền cho các nút khi hover */
+.product-card .add-to-cart:hover {
+    background-color: #FFD700; /* Màu vàng cho nút khi hover */
+}
+
+/* Thay đổi màu chữ của sản phẩm thành đen */
+.product-card h3 {
+    color: black; /* Màu đen cho tên sản phẩm */
+}
+
+/* Thay đổi màu chữ giá thành đen */
+.product-card p {
+    color: black; /* Màu đen cho giá sản phẩm */
+}
+
+/* Nút Đặt Mua */
+.btn-order:hover {
+    background-color: darkorange;
+    color: black;  /* Màu vàng cho nút khi hover */
+}
+
+/* Màu nền cho nút Đặt Mua */
+.btn-order {
+    background-color: orange; /* Màu xanh lá cây cho nút Đặt Mua */
+    color: white; /* Màu chữ trắng */
+}
+
+
 
     </style>
 </head>
@@ -777,38 +829,41 @@ footer {
 
     <nav class="navbar">
         <ul class="nav-list">
-            <li><a href="#">Trang Chủ</a></li>
+             <li><a href="../../index.php">Trang Chủ</a></li>
             <li class="dropdown">
                 <a href="#" class="nav-link">Menu</a>  
                 <div class="dropdown-content">
                     <div class="submenu">
                         <h4>THỨC UỐNG</h4>
                         <ul>
-                            <li>Trà sữa</li>
-                            <li>Best </li>
-                            <li>Trà trái cây</li>
-                            <li>Trà sữa</li>
-                            <li>Kem silky</li>
-                            <li>Cà phê</li>
-                            <li>Đá xay</li>
-                            <li>Bst kim cúc mộc tê</li>
+                            <li><a href="menu1.php">Trà Sữa</a></li>
+                            <li><a href="menu2.php">Coffe</a></li>
+                            <li><a href="menu3.php">Trà Hoa Quả Đặt Biệt</a></li>
+                            <li><a href="menu4.php">OLong</a></li>
+                            <li><a href="menu5.php">Sữa Tươi</a></li>
+                            <li><a href="menu6.php">Trà Trái Cây</a></li>
+                            <li><a href="menu7.php">Món Nóng</a></li>
+                            <li><a href="menu8.php">Đá Xay</a></li>
                         </ul>
                     </div>
                    
                 </div>
             </li>
-            <li class="dropdown">
+            <<li class="dropdown">
                 <a href="#" class="nav-link">Sản Phẩm Đóng Gói</a>
                 <div class="dropdown-content">
                     <div class="submenu">
                         <h4>TRÀ</h4>
                         <ul>
-                            <li>Trà hộp giấy</li>
-                            <li>Trà gói cao</li>
-                            <li>Trà túi lọc</li>
-                            <li>Trà trà tam giác</li>
-                            <li>Trà lài</li>
-                            <li>Trà xanh </li>
+                            <li><a href="menu8.php">Lục Trà</a></li>
+                            <li><a href="menu12.php">Trà OLong</a></li>
+                        </ul>
+                    </div>
+                    <div class="submenu">
+                        <h4>COFFEE</h4>
+                        <ul>
+                            <li><a href="menu10.php">Cà Phê Phin</a></li>
+                            <li><a href="menu11.php">Cà Phê Hạt</a></li>
                         </ul>
                     </div>
                 </div>

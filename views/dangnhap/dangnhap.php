@@ -59,7 +59,7 @@
         }
 
         .btn-login {
-            background-color: #28a745; /* Green color */
+            background-color: orange; /* Green color */
             color: #fff;
             border: none;
             padding: 14px;
@@ -73,7 +73,7 @@
         }
 
         .btn-login:hover {
-            background-color: #218838; /* Darker green on hover */
+            background-color: darkorange; /* Darker green on hover */
         }
 
         .error {
@@ -106,8 +106,9 @@
 <body>
     <div class="container">
         <div class="logo">
-            <img src="../img/logo xanh.png" alt="Gé cafe"> 
+           
         </div>
+        <h1>Đăng Nhập</h1>
         <form action="index.php?chucnang=xulylogin" method="POST">
             <label for="username">Tên tài khoản:</label>
             <input type="text" id="username" name="username" required>
@@ -124,7 +125,7 @@
 
         <div class="forgot-password">
             Bạn chưa có tài khoản? <a href="index.php?chucnang=dangki">Đăng Ký</a> <br>
-            <a href="#">Bạn quên mật khẩu?</a>
+            <a href="../views/dangnhap/quenmk.php">Bạn quên mật khẩu?</a>
         </div>
     </div>
 </body>

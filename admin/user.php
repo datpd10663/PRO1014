@@ -69,7 +69,6 @@
                     <td>Mã TK</td>
                     <td>Tên Tài Khoản</td>
                     <td>Email</td>
-                    <td>Mật Khẩu</td>
                     <td>Só Điện Thoại</td>
                     <td>Địa chỉ</td>
                     <td>Hành Động</td>
@@ -79,12 +78,11 @@
                 <td><?php echo $user['user_id']; ?></td>
                 <td><?php echo $user['username']; ?></td>
                 <td><?php echo $user['email']; ?></td>
-                <td><?php echo $user['password']; ?></td>
                 <td><?php echo $user['phone_number']; ?></td>
                 <td><?php echo $user['address']; ?></td>
                 
                 <td>
-                    <a class="btn btn-info" href="../control/index.php?chucnang=sua&ma=<?php echo $user['user_id']; ?>">Sửa</a>
+                  
                     <a class="btn btn-danger" href="../control/index.php?chucnang=xoa&ma=<?php echo $user['user_id']; ?>">Xóa</a>
                 </td>
             </tr>

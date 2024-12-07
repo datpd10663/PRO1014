@@ -1,5 +1,7 @@
 <?php
-include_once('./model/config.php');
+require_once './model/config.php'; // Đường dẫn đến file config
+
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -43,6 +45,7 @@ $tacasanpham = mysqli_query($conn, $sql);
 
 // Đừng quên đóng kết nối khi đã xong
 $conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -194,7 +197,7 @@ a{
 }
 
 .submenu h4 {
-    color: #00693e;
+    color: black;
     font-size: 16px;
     margin-bottom: 10px;
 }
@@ -437,7 +440,7 @@ a{
 
 /* Button styling */
 .product-card .add-to-cart {
-    background-color: #006400;
+    background-color: #FFA500; /* Orange color */
     color: white;
     padding: 10px 0;
     border-radius: 5px;
@@ -454,12 +457,33 @@ a{
 }
 
 .product-card .add-to-cart:hover {
-    background-color: #004d00;
+    background-color: #FF8C00; /* Darker orange on hover */
+}
+.btn-order {
+    background-color: #FFA500; /* Orange background */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    border: none;
+    text-transform: none;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.btn-order:hover {
+    background-color: #FF8C00; /* Darker orange on hover */
 }
 
 /* Heading styling */
 h2 {
-    color: #006400;
+    color: black;
     margin-bottom: 20px;
     font-size: 24px;
     text-align: center;
@@ -469,7 +493,7 @@ h2 {
 .product-card p {
     font-size: 16px;
     font-weight: bold;
-    color: #006400; /* Green color for price */
+    color: black; /* Green color for price */
     margin: 5px 0 15px 0;
 }
 
@@ -606,7 +630,7 @@ h2 {
     white-space: nowrap;
 }
 footer {
-    background-color: #007a2a;
+    background-color: black;
     color: white;
     padding: 20px;
     font-size: 15px;
@@ -654,7 +678,7 @@ footer {
 }
 .user-greeting {
     font-size: 14px;
-    color: #00693e;
+    color: black;
     margin-left: 10px;
 }
 .l1 {
@@ -729,6 +753,38 @@ footer {
 .l1 .icon:hover {
     transform: scale(1.1); /* Slightly increase the size of the icon when hovered */
 }
+/* Thay đổi màu chữ menu khi hover */
+.nav-list a:hover {
+    color: #FFD700; /* Màu vàng khi hover */
+}
+
+/* Thay đổi màu nền cho các nút khi hover */
+.product-card .add-to-cart:hover {
+    background-color: #FFD700; /* Màu vàng cho nút khi hover */
+}
+
+/* Thay đổi màu chữ của sản phẩm thành đen */
+.product-card h3 {
+    color: black; /* Màu đen cho tên sản phẩm */
+}
+
+/* Thay đổi màu chữ giá thành đen */
+.product-card p {
+    color: black; /* Màu đen cho giá sản phẩm */
+}
+
+/* Nút Đặt Mua */
+.btn-order:hover {
+    background-color: darkorange;
+    color: black;  /* Màu vàng cho nút khi hover */
+}
+
+/* Màu nền cho nút Đặt Mua */
+.btn-order {
+    background-color: orange; /* Màu xanh lá cây cho nút Đặt Mua */
+    color: white; /* Màu chữ trắng */
+}
+
 
   
 
@@ -738,7 +794,7 @@ footer {
 <header class="header">
     <div class="header-left">
         <img src="./img/logo bee.png" height="50%" width="500px;" alt="Logo" class="logo">
-        <input type="text" placeholder="Bạn muốn mua gì..." class="search-bar">
+        
     </div>
     
     <div class="header-right">
@@ -759,7 +815,7 @@ footer {
                 <ul>
                     <?php if (isset($_SESSION['username'])) { ?>
                         <li><a href="./control/index.php?chucnang=view">Giỏ hàng</a></li>
-                        <li><a href="./views/Invoice/hoadon.php">Hóa đơn</a></li>
+                        <li><a href="./views/Invoice/hoadon.php">Đơn Hàng</a></li>
                         <li><a href="./control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
                         <li><a href="./control/index.php?chucnang=login">Đăng nhập</a></li>
@@ -800,15 +856,15 @@ footer {
                     <div class="submenu">
                         <h4>TRÀ</h4>
                         <ul>
-                            <li>Lục Trà </li>
-                            <li>Trà OLong</li>
+                            <li><a href="./views/menu/menu9.php">Lục Trà</a></li>
+                            <li><a href="./views/menu/menu12.php">Trà OLong</a></li>
                         </ul>
                     </div>
                     <div class="submenu">
                         <h4>COFFEE</h4>
                         <ul>
-                            <li>Cà Phê Phin</li>
-                            <li>Cà Phê Hạt</li>
+                            <li><a href="./views/menu/menu10.php">Cà Phê Phin</a></li>
+                            <li><a href="./views/menu/menu11.php">Cà Phê Hạt</a></li>
                         </ul>
                     </div>
                 </div>
@@ -981,7 +1037,7 @@ footer {
 
 
 
- <footer style="background-color: #007a2a; color: white; padding: 20px; font-size: 15px; line-height: 1.6;">
+ <footer style=" padding: 20px; font-size: 15px; line-height: 1.6;">
     <div style="display: flex; flex-wrap: wrap; gap: 20px;">
       <!-- Phần địa chỉ -->
       <div style="flex: 1 1 300px; min-width: 300px;">
@@ -1056,7 +1112,7 @@ footer {
   
    <!-- Phần cuối -->
 <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; font-size: 16px;">
-    <p>© Công ty CP Phúc Long Heritage 2024</p>
+    <p>© web dự án 1</p>
     <div>
       <img src="http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png" alt="Đã thông báo Bộ Công Thương" style="height: 40px; margin-right: 15px;">
       <a href="#"><img src="./img//inta.png" alt="Instagram" style="height: 30px;"></a>

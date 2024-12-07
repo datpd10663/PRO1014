@@ -50,4 +50,5 @@ function xoa($product_id) {
     
     mysqli_query($conn, $sql);  // Updated connection variable
 }
+
 ?>

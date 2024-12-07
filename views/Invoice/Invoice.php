@@ -36,6 +36,7 @@ $_SESSION['cart'] = $cart_items;
 
 $stmt->close();
 $total_amount = $_SESSION['total'];
+
 ?>
 
     <!DOCTYPE html>
@@ -108,15 +109,15 @@ $total_amount = $_SESSION['total'];
     </head>
     <body>
     <div class="container">
-        <h2>Thông tin thanh toán</h2>
+        <h2>Thông tin đặt hàng</h2>
         <form action="../../control/index.php?chucnang=process_payment" method="post">
             <div class="form-group">
                 <label for="name">Tên người nhận</label>
                 <input type="text" id="name" name="name" required>
             </div>
             <div class="form-group">
-                <label for="address">Địa chỉ</label>
-                <input type="text" id="address" name="address" required>
+                <label for="billing_address">Địa chỉ</label>
+                <input type="text" id="billing_address" name="billing_address" required>
             </div>
             <div class="form-group">
                 <label for="phone">Số điện thoại</label>
@@ -153,8 +154,8 @@ $total_amount = $_SESSION['total'];
                 </table>
                 <p><strong>Tổng cộng:</strong> <?php echo number_format($total_amount, 3, ',', '.') . "đ"; ?></p>
             </div>
-
-            <button type="submit" class="btn">Hoàn tất thanh toán</button>
+            <br>
+            <button type="submit" class="btn">Hoàn tất đặt hàng</button>
         </form>
     </div>
     </body>

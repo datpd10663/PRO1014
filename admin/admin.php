@@ -49,8 +49,8 @@
                     <i class="bi bi-person mr-2" style="font-size: 20px;"></i>Quản Lý Tài Khoản
                 </a>
                 
-                <a class="list-group-item list-group-item-action list-group-item-dark" href="manage_comments.php">
-                    <i class="bi bi-chat-text mr-2" style="font-size: 20px;"></i>Quản Lý Bình Luận
+                <a class="list-group-item list-group-item-action list-group-item-dark" href="donhang.php">
+                    <i class="bi bi-chat-text mr-2" style="font-size: 20px;"></i>Quản Lý Đơn Hàng
                 </a>
                 
                 <a class="list-group-item list-group-item-action list-group-item-dark" href="haodon.php">
