@@ -366,7 +366,113 @@ a{
 .active, .dot:hover {   
     background-color: #717171;
 }
+.pl-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
 
+    .pl-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .pl-header h1 {
+        color: #006341;
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .pl-header p {
+        color: #666;
+        font-style: italic;
+    }
+
+    .pl-promo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+    }
+
+    .pl-promo-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease;
+    }
+
+    .pl-promo-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .pl-promo-image {
+        width: 100%;
+        padding-top: 66.67%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .pl-promo-image img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .pl-promo-details {
+        padding: 16px;
+    }
+
+    .pl-view-count {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .pl-view-count i {
+        font-size: 16px;
+    }
+
+    .pl-divider {
+        height: 1px;
+        background-color: #eee;
+        margin: 12px 0;
+    }
+
+    .pl-promo-title {
+        color: #333;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.4;
+        margin: 0;
+        position: relative;
+        padding-left: 16px;
+    }
+
+    .pl-promo-title::before {
+        content: "-";
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    @media (max-width: 768px) {
+        .pl-promo-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .pl-header h1 {
+            font-size: 24px;
+        }
+    }
 
 
 
@@ -955,67 +1061,118 @@ footer {
 
 </div>  
  </div>
-
- <div class="container">
-    <h1 class="title">Tin tức & Khuyến mãi</h1>
-    <p class="subtitle">Tin tức & Khuyến mãi của Phúc Long</p> <!-- Thêm dòng này -->
-    <div class="news-section">
-        <!-- Card 1 -->
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 1" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 7004</p>
-                <p class="news-title">ƯU ĐÃI HỘI VIÊN - TẶNG COUPON MIỄN PHÍ SẢN PHẨM MỚI BST...</p>
+ <div class="pl-container">
+        <div class="pl-header">
+            <h1>Tin tức & Khuyến mãi</h1>
+            <p>Tin tức & Khuyến mãi của Phúc Long</p>
+        </div>
+    
+        <div class="pl-promo-grid">
+            <div class="pl-promo-card">
+                <div class="pl-promo-image">
+                    <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6053994243250_7536544a2cc73412b337f564985cae34-20241121024431.jpg" alt="ĐẶT ĐƠN CALL CENTER - ƯU ĐÃI BẤT NGỜ">
+                </div>
+                <div class="pl-promo-details">
+                    <div class="pl-view-count">
+                        <i>👁</i> 1159
+                    </div>
+                    <div class="pl-divider"></div>
+                    <h3 class="pl-promo-title">ĐẶT ĐƠN CALL CENTER - ƯU ĐÃI BẤT NGỜ</h3>
+                </div>
+            </div>
+    
+            <div class="pl-promo-card">
+                <div class="pl-promo-image">
+                    <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572747_04c1789072a3dc261814ffecf4de5c03-20241112111018.jpg" alt="ƯU ĐÃI HỘI VIÊN">
+                </div>
+                <div class="pl-promo-details">
+                    <div class="pl-view-count">
+                        <i>👁</i> 11627
+                    </div>
+                    <div class="pl-divider"></div>
+                    <h3 class="pl-promo-title">ƯU ĐÃI HỘI VIÊN - TẶNG COUPON MIỄN PHÍ SẢN PHẨM MỚI BST...</h3>
+                </div>
+            </div>
+    
+            <div class="pl-promo-card">
+                <div class="pl-promo-image">
+                    <img src="https://hcm.fstorage.vn/images/2024/11/z6025212289856_8feca43bb1a3620310ff43604f0bed78-20241119113218.jpg" alt="ĐÓN GIÁNG SINH">
+                </div>
+                <div class="pl-promo-details">
+                    <div class="pl-view-count">
+                        <i>👁</i> 20271
+                    </div>
+                    <div class="pl-divider"></div>
+                    <h3 class="pl-promo-title">🎄 ĐÓN GIÁNG SINH CÙNG LY GẤU PHÚC LONG ĐỔI MÀU COOL...</h3>
+                </div>
+            </div>
+    
+            <div class="pl-promo-card">
+                <div class="pl-promo-image">
+                    <img src="https://hcm.fstorage.vn/phuclong/2024/10/z5981345790985_8ce39b6ac5b3cf22e6e3bef87570402f-20241030082151.jpg" alt="HAPPY HALLOWEEN">
+                </div>
+                <div class="pl-promo-details">
+                    <div class="pl-view-count">
+                        <i>👁</i> 3742
+                    </div>
+                    <div class="pl-divider"></div>
+                    <h3 class="pl-promo-title">HAPPY HALLOWEEN - TẶNG COUPON MUA 1 TẶNG 1</h3>
+                </div>
+            </div>
+    
+            <div class="pl-promo-card">
+                <div class="pl-promo-image">
+                    <img src="https://hcm.fstorage.vn/images/2024/09/z5822373538762_464572d2bfdb05b3f32cc5898517b058-20240912033812.jpg" alt="HAPPY HALLOWEEN">
+                </div>
+                <div class="pl-promo-details">
+                    <div class="pl-view-count">
+                        <i>👁</i> 3742
+                    </div>
+                    <div class="pl-divider"></div>
+                    <h3 class="pl-promo-title">HAPPY HALLOWEEN - TẶNG COUPON MUA 1 TẶNG 1</h3>
+                </div>
+            </div>
+    
+            <div class="pl-promo-card">
+                <div class="pl-promo-image">
+                    <img src="https://hcm.fstorage.vn/images/2024/08/__1920x1080-20240828081829.jpg" alt="HAPPY HALLOWEEN">
+                </div>
+                <div class="pl-promo-details">
+                    <div class="pl-view-count">
+                        <i>👁</i> 3742
+                    </div>
+                    <div class="pl-divider"></div>
+                    <h3 class="pl-promo-title">HAPPY HALLOWEEN - TẶNG COUPON MUA 1 TẶNG 1</h3>
+                </div>
+            </div>
+    
+            <div class="pl-promo-card">
+                <div class="pl-promo-image">
+                    <img src="https://hcm.fstorage.vn/images/2024/08/pl_posm_popa4_phuclong_bday_2024_v2_1920x576px-20240814103704.jpg" alt="HAPPY HALLOWEEN">
+                </div>
+                <div class="pl-promo-details">
+                    <div class="pl-view-count">
+                        <i>👁</i> 3742
+                    </div>
+                    <div class="pl-divider"></div>
+                    <h3 class="pl-promo-title">HAPPY HALLOWEEN - TẶNG COUPON MUA 1 TẶNG 1</h3>
+                </div>
+            </div>
+    
+            <div class="pl-promo-card">
+                <div class="pl-promo-image">
+                    <img src="https://hcm.fstorage.vn/images/2024/07/website_kv_1280x543px_copy-20240729065317.jpg" alt="HAPPY HALLOWEEN">
+                </div>
+                <div class="pl-promo-details">
+                    <div class="pl-view-count">
+                        <i>👁</i> 3742
+                    </div>
+                    <div class="pl-divider"></div>
+                    <h3 class="pl-promo-title">HAPPY HALLOWEEN - TẶNG COUPON MUA 1 TẶNG 1</h3>
+                </div>
             </div>
         </div>
-        <!-- Card 2 -->
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 2" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 2566</p>
-                <p class="news-title">HAPPY HALLOWEEN - TẶNG COUPON MUA 1 TẶNG 1</p>
-            </div>
-        </div>
-        <!-- Card 3 -->
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 3" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 5822</p>
-                <p class="news-title">ƯU ĐÃI CHO HỘI VIÊN - TẶNG COUPON MUA 1 TẶNG 1</p>
-            </div>
-        </div>
-        <!-- Card 4 -->
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 4" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 2866</p>
-                <p class="news-title">ƯU ĐÃI BÁNH TRUNG THU ĐẾN 15% DÀNH RIÊNG CHO HỘI VIÊN</p>
-            </div>
-        </div>
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 4" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 2866</p>
-                <p class="news-title">ƯU ĐÃI BÁNH TRUNG THU ĐẾN 15% DÀNH RIÊNG CHO HỘI VIÊN</p>
-            </div>
-        </div>
-        <div class="news-card">
-            <img src="https://hcm.fstorage.vn/phuclong/2024/11/z6025323572810_8c14ddbd12e6a37fac113b511d10c1a8-20241112105835.jpg" alt="Khuyến mãi 4" class="news-image">
-            <div class="divider"></div>
-            <div class="news-info">
-                <p class="news-views">👁️ 2866</p>
-                <p class="news-title">ƯU ĐÃI BÁNH TRUNG THU ĐẾN 15% DÀNH RIÊNG CHO HỘI VIÊN</p>
-            </div>
-        </div>
-        
     </div>
-</div>
-
 
 <section class="partners-section">
     <div class="container">
