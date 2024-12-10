@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_method']) && 
     $stmt = $conn->prepare("UPDATE Invoice SET payment_status = 'Thanh toán thành công' WHERE invoice_id = ? AND user_id = ?");
     $stmt->bind_param("ii", $invoice_id, $user_id);
     if ($stmt->execute()) {
-        echo "<script>alert('Thanh toán tiền mặt thành công!'); window.location.href = '../in.php';</script>";
+        echo "<script>alert('Thanh toán tiền mặt thành công!'); window.location.href = 'hoadon.php';</script>";
     } else {
         echo "<script>alert('Lỗi khi cập nhật trạng thái thanh toán.');</script>";
     }

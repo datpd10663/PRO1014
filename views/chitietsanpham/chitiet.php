@@ -66,8 +66,15 @@ if ($user) {
 $giohang_count = count($cart_items);
 
 // Chạy truy vấn khác sau khi truy vấn giỏ hàng đã xong
-$sql = 'SELECT * FROM Product';
-$tacasanpham = mysqli_query($conn, $sql);
+$sql_comments = "SELECT c.comment_text, c.admin_reply, c.created_at, u.username 
+                 FROM comments c 
+                 JOIN User u ON c.user_id = u.user_id 
+                 WHERE c.product_id = ? 
+                 ORDER BY c.created_at DESC";
+$stmt = $conn->prepare($sql_comments);
+$stmt->bind_param("i", $product_id);
+$stmt->execute();
+$comments = $stmt->get_result();
 
 // Đừng quên đóng kết nối khi đã xong
 $conn->close();
@@ -1016,6 +1023,37 @@ input[type="radio"] {
     padding: 12px 20px; /* Padding for the button */
     border-radius: 5px;
 }
+.comment-section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.comment-section textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.comment-list {
+    margin-top: 20px;
+}
+
+.comment-item {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.comment-item p {
+    margin: 5px 0;
+}
+
+.comment-item small {
+    color: gray;
+    font-size: 0.9em;
+}
+
     </style>
 </head>
 <body>
@@ -1041,14 +1079,15 @@ input[type="radio"] {
             <i class="icons">
             <img src="../../img/profile.png" alt="Profile Icon" class="icon">
 
-                <ul>
+            <ul>
                     <?php if (isset($_SESSION['username'])) { ?>
-                        <li><a href="../control/index.php?chucnang=view">Giỏ hàng</a></li>
-                        <li><a href="hoadon.php">Hóa đơn</a></li>
+                        <li><a href="../../control/index.php?chucnang=view">Giỏ hàng</a></li>
+                        <li><a href="../../views/Invoice/donhang.php">Đơn hàng</a></li>
+                        <li><a href="../../views/Invoice/hoadon.php">Hóa đơn</a></li>
                         <li><a href="../../control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
                         <li><a href="../../control/index.php?chucnang=login">Đăng nhập</a></li>
-                        <li><a href="../control/index.php?chucnang=dangki">Đăng ký</a></li>
+                        <li><a href="../../control/index.php?chucnang=dangki">Đăng ký</a></li>
                     <?php } ?>
                 </ul>
             </i>
@@ -1058,37 +1097,25 @@ input[type="radio"] {
 </header>
 
     <nav class="navbar">
-        <ul class="nav-list">
+    <ul class="nav-list">
             <li><a href="../../index.php">Trang Chủ</a></li>
             <li class="dropdown">
-                <a href="#" class="nav-link">Menu</a>  
+                <a href="./views/menu/menu1.php " class="nav-link">Menu</a>  
                 <div class="dropdown-content">
                     <div class="submenu">
                         <h4>THỨC UỐNG</h4>
                         <ul>
-                            <li>Bst mới "teararmisu"</li>
-                            <li>Best seller</li>
-                            <li>Trà trái cây</li>
-                            <li>Trà sữa</li>
-                            <li>Kem silky</li>
-                            <li>Cà phê</li>
-                            <li>Đá xay</li>
-                            <li>Bst kim cúc mộc tê</li>
+                            <li><a href="../views/menu/menu1.php">Trà Sữa</a></li>
+                            <li><a href="../views/menu/menu2.php">Coffe</a></li>
+                            <li><a href="../views/menu/menu3.php">Trà Hoa Quả Đặt Biệt</a></li>
+                            <li><a href="../views/menu/menu4.php">OLong</a></li>
+                            <li><a href="../views/menu/menu5.php">Sữa Tươi</a></li>
+                            <li><a href="../views/menu/menu6.php">Trà Trái Cây</a></li>
+                            <li><a href="../views/menu/menu7.php">Món Nóng</a></li>
+                            <li><a href="../views/menu/menu8.php">Đá Xay</a></li>
                         </ul>
                     </div>
-                    <div class="submenu">
-                        <h4>BÁNH</h4>
-                        <ul>
-                            <li>Bánh lạnh</li>
-                            <li>Bánh cookies - croissant</li>
-                            <li>Bánh mì</li>
-                        </ul>
-                        <h4>BST LY GẤU GIÁNG SINH</h4>
-                        <ul>
-                            <li>Combo ly gấu và nước 169k</li>
-                            <li>Ly gấu 149k</li>
-                        </ul>
-                    </div>
+                   
                 </div>
             </li>
             <li class="dropdown">
@@ -1097,18 +1124,15 @@ input[type="radio"] {
                     <div class="submenu">
                         <h4>TRÀ</h4>
                         <ul>
-                            <li>Trà hộp giấy</li>
-                            <li>Trà gói cao</li>
-                            <li>Trà túi lọc</li>
-                            <li>Trà trà tam giác</li>
-                            <li>Trà lài</li>
-                            <li>Trà xanh </li>
+                            <li><a href="../views/menu/menu9.php">Lục Trà</a></li>
+                            <li><a href="../views/menu/menu12.php">Trà OLong</a></li>
                         </ul>
                     </div>
                     <div class="submenu">
-                        <h4>CÀ PHÊ</h4>
+                        <h4>COFFEE</h4>
                         <ul>
-                            <li>Cà phê hạt không bơ</li>
+                            <li><a href="../views/menu/menu10.php">Cà Phê Phin</a></li>
+                            <li><a href="../views/menu/menu11.php">Cà Phê Hạt</a></li>
                         </ul>
                     </div>
                 </div>
@@ -1134,10 +1158,10 @@ input[type="radio"] {
     </div>
     <div class="product-content">
     <div class="product-info">
-        <h2><?php echo htmlspecialchars($sanpham['name_product']); ?></h2>
-        <p>Mô tả: <?php echo htmlspecialchars($sanpham['description']); ?></p>
+        <h2><?php echo $sanpham['name_product']; ?></h2>
+        <p>Mô tả: <?php echo $sanpham['description']; ?></p>
         <div class="price-quantity">
-    <div class="price"><?php echo htmlspecialchars($sanpham['price']); ?> đ</div>
+    <div class="price"><?php echo $sanpham['price']; ?> đ</div>
 </div>
 <h2>Chọn chi tiết sản phẩm</h2>
 <form action="../../control/index.php?chucnang=add" method="POST">
@@ -1184,7 +1208,7 @@ input[type="radio"] {
     </div>
 
     <!-- Product ID (Ẩn đi) -->
-    <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product_id); ?>">
+    <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
 
     <!-- Nút submit -->
     <div class="add-to-cart">
@@ -1194,7 +1218,41 @@ input[type="radio"] {
 
     </div>
     </div>
+    
 </div>
+
+    <div class="comment-section">
+    <h3>Bình luận</h3>
+    <?php if ($user): ?>
+        <form action="conment.php" method="POST">
+            <textarea name="comment_text" rows="3" placeholder="Viết bình luận của bạn..." required></textarea>
+            <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product_id); ?>">
+            <button type="submit">Gửi bình luận</button>
+        </form>
+    <?php else: ?>
+        <p>Bạn cần <a href="../../control/index.php?chucnang=login">đăng nhập</a> để bình luận.</p>
+    <?php endif; ?>
+
+    <div class="comment-list">
+    <h3>Các bình luận</h3>
+    <?php if ($comments->num_rows > 0): ?>
+        <?php while ($row = $comments->fetch_assoc()): ?>
+            <div class="comment-item">
+                <p><strong><?php echo $row['username']; ?>:</strong></p>
+                <p><?php echo $row['comment_text']; ?></p>
+                <?php if (!empty($row['admin_reply'])): ?>
+                    <p><strong>Phản hồi từ admin:</strong> <?php echo $row['admin_reply']; ?></p>
+                <?php else: ?>
+                    <p><em>Chưa có phản hồi từ admin.</em></p>
+                <?php endif; ?>
+                <small><?php echo $row['created_at']; ?></small>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p>Chưa có bình luận nào.</p>
+    <?php endif; ?>
+</div>
+
 <footer style="background-color: #007a2a; color: white; padding: 20px; font-size: 15px; line-height: 1.6;">
     <div style="display: flex; flex-wrap: wrap; gap: 20px;">
       <!-- Phần địa chỉ -->

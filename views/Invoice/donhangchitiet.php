@@ -9,8 +9,12 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit;
 }
-
-$invoice_id = isset($_GET['invoice_id']) ? $_GET['invoice_id'] : null;
+if (isset($_SESSION['invoice_id'])) {
+    $invoice_id = $_SESSION['invoice_id'];
+} else {
+    echo "Không tìm thấy hóa đơn.";
+    exit;
+}
 $user_id = $_SESSION['user_id'];
 
 if (!$invoice_id) {
@@ -176,12 +180,12 @@ button:hover {
                 <?php foreach ($details as $detail): ?>
                     <tr>
                         <td class="product-info">
-                            <img src="../../control/<?php echo htmlspecialchars($detail['address']); ?>" alt="Sản phẩm">
-                            <h3><?php echo htmlspecialchars($detail['name_product']); ?></h3>
+                            <img src="../../control/<?php echo $detail['address']; ?>" alt="Sản phẩm">
+                            <h3><?php echo $detail['name_product']; ?></h3>
                         </td>
                         <td><?php echo $detail['quantity']; ?></td>
-                        <td><?php echo number_format($detail['price'], 3, ',', '.') . "đ"; ?></td>
-                        <td><?php echo number_format($detail['total_price'], 3, ',', '.') . "đ"; ?></td>
+                        <td><?php echo $detail['price'], "đ"; ?></td>
+                        <td><?php echo $detail['total_price'], "đ"; ?></td>
                     </tr>
 
                 <?php endforeach; ?>

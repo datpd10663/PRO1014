@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xóa Sản Phẩm</title>
+    <title>Xóa Tài Khoản</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,12 +44,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bạn có chắc chắn xóa sản phẩm này?</h1>
-        <h2><?php echo $sanpham['name_product']; ?></h2>
-        <p>Mã sản phẩm: <strong><?php echo $sanpham['product_id']; ?></strong></p>
-        <form action="index.php?chucnang=xulyxoa" method="post">
+        <h1>Bạn có chắc chắn xóa tài khoản này?</h1>
+        <p>Tên tài khoản: <strong><?php echo $user['username']; ?></strong></p>
+        <form action="index.php?chucnang=xulyxoa_user" method="post">
             <!-- Lưu mã xóa -->
-            <input type="hidden" name="macanxoa" value="<?php echo $sanpham['product_id']; ?>">
+            <input type="hidden" name="macanxoa" value="<?php echo $user['user_id']; ?>">
             <button class="btn-delete" name="xacnhan" value="xoa">Xóa</button>
             <button class="btn-cancel" name="xacnhan" value="huy">Hủy</button>
         </form>

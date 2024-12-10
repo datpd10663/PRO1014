@@ -273,7 +273,89 @@
                                             exit;
                                         }
                                     }
-                                    break;     
+                                    break;   
+                                    case 'xoa_user':
+                                        if (isset($_GET['ma'])) {
+                                            $user_id = $_GET['ma'];
+                                    
+                                            // Truy vấn thông tin sản phẩm từ database
+                                            $sql = "SELECT * FROM User WHERE user_id = ?";
+                                            $stmt = $conn->prepare($sql);
+                                            $stmt->bind_param("i", $user_id);
+                                            $stmt->execute();
+                                            $result = $stmt->get_result();
+                                    
+                                            if ($result->num_rows > 0) {
+                                                $user = $result->fetch_assoc();
+                                            } else {
+                                                echo "Không tìm thấy tài khoản cần xóa.";
+                                                exit;
+                                            }
+                                            $stmt->close();
+                                    
+                                            // Hiển thị giao diện xác nhận xóa
+                                            include('../admin/delete_user.php');
+                                        } else {
+                                            echo "Mã tài khoản không hợp lệ.";
+                                            exit;
+                                        }
+                                        break; 
+                                        case 'xulyxoa_user':
+                                            if (isset($_POST['macanxoa'], $_POST['xacnhan'])) {
+                                                if ($_POST['xacnhan'] == 'xoa') {
+                                                    xoatk($_POST['macanxoa']);
+                                                    header('Location: ../admin/user.php');
+                                                    exit;
+                                                }
+                                                if ($_POST['xacnhan'] == 'huy') {
+                                                    header('Location: ../admin/user.php');
+                                                    exit;
+                                                }
+                                            }
+                                            break;
+                                            case 'update_profile':
+                                                $user_id = $_SESSION['user_id'];
+                                                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                                                    $username = $_POST['username'];
+                                                    $phone_number = $_POST['phone_number'];
+                                                    $address = $_POST['address'];
+                                            
+                                                    if (chinhsuatk($user_id, $username, $phone_number, $address)) {
+                                                        $message = "Thông tin đã được cập nhật thành công!";
+                                                        // Chuyển hướng và hiển thị thông báo sau khi cập nhật thành công
+                                                        include('../views/dangnhap/profile.php');
+                                                    } else {
+                                                        $message = "Cập nhật thất bại. Vui lòng thử lại!";
+                                                        // Hiển thị thông báo khi cập nhật thất bại
+                                                        include('../views/dangnhap/profile.php');
+                                                    }
+                                                } else {
+                                                    include('../views/dangnhap/profile.php');
+                                                }
+                                                break;
+                                            
+                                             case 'view_profile':
+                                                $user_id = $_SESSION['user_id'];
+                                                if (isset($user_id)) {
+                                                    // Truy vấn và lấy thông tin người dùng từ database
+                                                    $stmt = $conn->prepare("SELECT username, phone_number, address FROM User WHERE user_id = ?");
+                                                    $stmt->bind_param("i", $user_id);
+                                                    $stmt->execute();
+                                                    $result = $stmt->get_result();
+                                                    
+                                                    if ($result->num_rows > 0) {
+                                                        $user = $result->fetch_assoc();
+                                                    } else {
+                                                        $message = "Không tìm thấy thông tin người dùng.";
+                                                    }
+                                                    $stmt->close();
+                                                } else {
+                                                    $message = "Không xác định được người dùng.";
+                                                }
+                                                include('../views/dangnhap/profile.php');
+                                                    break;
+                                                   
+                    
                                     case 'add':
                                         if (!isset($_SESSION['user_id'])) {
                                             echo "Bạn cần đăng nhập để thực hiện thao tác này.";
@@ -463,15 +545,21 @@
                                                     // Tạo hóa đơn mới
                                                     $invoice_date = date('Y-m-d');
                                                     $due_date = date('Y-m-d', strtotime('+7 days'));
+                                                
+                                                    $recipient_name = $_POST['recipient_name'];
                                                     $address = $_POST['billing_address'];
+                                                    $phone = $_POST['phone'];
+                                                    $notes = isset($_POST['notes']) ? $_POST['notes'] : null;
+                                                
+                                                    // Tính tổng tiền từ giỏ hàng
                                                     $total_amount = array_sum(array_map(function ($item) {
                                                         return $item['quantity'] * $item['price'];
                                                     }, $_SESSION['cart']));
                                                 
                                                     // Thêm hóa đơn vào bảng Invoice
-                                                    $stmt = $conn->prepare("INSERT INTO Invoice (invoice_date, payment_status, total_amount, due_date, billing_address, user_id)
-                                                                            VALUES (?, 'Chưa Thanh Toán', ?, ?, ?, ?)");
-                                                    $stmt->bind_param("sdssi", $invoice_date, $total_amount, $due_date, $address, $user_id);
+                                                    $stmt = $conn->prepare("INSERT INTO Invoice (invoice_date, payment_status, total_amount, due_date, billing_address, user_id, recipient_name, phone, notes)
+                                                                            VALUES (?, 'Chưa Thanh Toán', ?, ?, ?, ?, ?, ?, ?)");
+                                                    $stmt->bind_param("sdssisss", $invoice_date, $total_amount, $due_date, $address, $user_id, $recipient_name, $phone, $notes);
                                                     $stmt->execute();
                                                     $invoice_id = $stmt->insert_id; // Lấy ID của hóa đơn vừa tạo
                                                     $stmt->close();
@@ -500,9 +588,8 @@
                                                     exit(); // Dừng thực thi để đảm bảo không có lỗi xảy ra
                                                     break;
                                                 
-                                                default:
-                                                    echo "Chức năng không hợp lệ.";
-                                                    break;
+                                             
+                                
                                                     case 'cancel_order':
                                                         if (!isset($_SESSION['user_id'])) {
                                                             die("Lỗi: Không tìm thấy user_id trong session.");
@@ -529,7 +616,7 @@
                                                             exit;
                                                         }
                                                     
-                                                        if ($invoice['payment_status'] !== 'chưa thanh toán') {
+                                                        if ($invoice['payment_status'] !== 'Chưa Thanh Toán') {
                                                             echo "Lỗi: Chỉ có thể hủy đơn hàng chưa thanh toán.";
                                                             exit;
                                                         }
@@ -549,7 +636,7 @@
                                                         echo "Đơn hàng đã được hủy thành công.";
                                                     
                                                         // Chuyển hướng về trang danh sách hóa đơn hoặc trang khác
-                                                        header("Location: ../views/Invoice/hoadon.php");
+                                                        header("Location: ../views/Invoice/donhang.php");
                                                         exit();
                                                     
                                                         break;
@@ -561,7 +648,7 @@
                                                                 $status = $_POST['payment_status'];
                                                         
                                                                 // Kiểm tra trạng thái thanh toán có hợp lệ không
-                                                                if ($status == 'Thanh toán thành công') {
+                                                                if ($status == 'Thanh Toán Thành Công') {
                                                                     // Cập nhật trạng thái thanh toán thành công trong database
                                                                     $stmt = $conn->prepare("UPDATE Invoice SET payment_status = ? WHERE invoice_id = ? AND user_id = ?");
                                                                     $stmt->bind_param("sii", $status, $invoice_id, $_SESSION['user_id']);
@@ -675,9 +762,67 @@
                                                             }
                                                         }
                                                         break;
-                                                       
-                                            }   
-                                     }
-
-    
+                                                        case 'list': // Hiển thị danh sách đánh giá
+                                                            $reviews = getAllReviews();
+                                                            include '../views/review/reviewList.php';
+                                                            break;
+                                                
+                                                        case 'add': // Thêm đánh giá mới
+                                                            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                                                $user_id = $_POST['user_id'];
+                                                                $product_id = $_POST['product_id'];
+                                                                $rating = $_POST['rating'];
+                                                                $comment = $_POST['comment'];
+                                                
+                                                                if (addReview($user_id, $product_id, $rating, $comment)) {
+                                                                    $message = 'Thêm đánh giá thành công!';
+                                                                } else {
+                                                                    $message = 'Có lỗi xảy ra khi thêm đánh giá.';
+                                                                }
+                                                                echo "<script>alert('$message'); window.location.href = 'index.php?action=list';</script>";
+                                                            }
+                                                            include '../views/review/addReview.php';
+                                                            break;
+                                                
+                                                        case 'reply': // Phản hồi đánh giá
+                                                            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                                                $review_id = $_POST['review_id'];
+                                                                $admin_comment = $_POST['admin_comment'];
+                                                
+                                                                if (adminReply($review_id, $admin_comment)) {
+                                                                    $message = 'Phản hồi thành công!';
+                                                                } else {
+                                                                    $message = 'Có lỗi xảy ra khi phản hồi.';
+                                                                }
+                                                                echo "<script>alert('$message'); window.location.href = 'index.php?action=list';</script>";
+                                                            }
+                                                            include '../views/review/adminReply.php';
+                                                            break;
+                                                
+                                                            case 'reply_comment':
+                                                                if (isset($_POST['comment_id']) && isset($_POST['admin_reply'])) {
+                                                                    $comment_id = $_POST['comment_id'];
+                                                                    $admin_reply = $_POST['admin_reply'];
+                                                
+                                                                    // Cập nhật phản hồi vào cơ sở dữ liệu
+                                                                    $sql = "UPDATE comments SET admin_reply = ? WHERE comment_id = ?";
+                                                                    $stmt = $conn->prepare($sql);
+                                                                    $stmt->bind_param('si', $admin_reply, $comment_id);
+                                                
+                                                                    if ($stmt->execute()) {
+                                                                        header("Location: ../admin/conments.php"); // Chuyển hướng về trang quản lý bình luận
+                                                                        exit();
+                                                                    } else {
+                                                                        echo "Lỗi khi lưu phản hồi.";
+                                                                    }
+                                                
+                                                                    $stmt->close();
+                                                                } else {
+                                                                    echo "Dữ liệu không hợp lệ.";
+                                                                }
+                                                                break;
+                                                            // Thêm các case khác nếu cần xử lý các chức năng khác
+                                                          
+                                                        }
+                                                    }
     ?>

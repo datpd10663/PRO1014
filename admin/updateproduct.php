@@ -62,10 +62,10 @@
     <input type="text" name="product_id" value="<?php echo $sanpham['product_id']; ?>" readonly><br>
     
     <label for="name_product">Tên Sản Phẩm</label>
-    <input type="text" name="name_product" value="<?php echo htmlspecialchars($sanpham['name_product']); ?>"><br>
+    <input type="text" name="name_product" value="<?php echo $sanpham['name_product']; ?>"><br>
     
     <label for="description">Mô Tả</label>
-    <input type="text" name="description" value="<?php echo htmlspecialchars($sanpham['description']); ?>"><br>
+    <input type="text" name="description" value="<?php echo $sanpham['description']; ?>"><br>
     
     <label for="price">Giá</label>
     <input type="number" name="price" step="0.001" value="<?php echo $sanpham['price']; ?>"><br>

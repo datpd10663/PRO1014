@@ -364,6 +364,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 <ul>
                     <?php if (isset($_SESSION['username'])) { ?>
                         <li><a href="../../control/index.php?chucnang=view">Giỏ hàng</a></li>
+                        <li><a href="../../views/Invoice/donhang.php">Đơn hàng</a></li>
                         <li><a href="../../views/Invoice/hoadon.php">Hóa đơn</a></li>
                         <li><a href="../../control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
@@ -378,37 +379,25 @@ if (session_status() == PHP_SESSION_NONE) {
 </header>
 
     <nav class="navbar">
-        <ul class="nav-list">
-            <li><a href="#">Trang Chủ</a></li>
+    <ul class="nav-list">
+            <li><a href="../../index.php">Trang Chủ</a></li>
             <li class="dropdown">
-                <a href="/Menu/Menu.html" class="nav-link">Menu</a>
+                <a href="./views/menu/menu1.php " class="nav-link">Menu</a>  
                 <div class="dropdown-content">
                     <div class="submenu">
                         <h4>THỨC UỐNG</h4>
                         <ul>
-                            <li>Bst mới "teararmisu"</li>
-                            <li>Best seller</li>
-                            <li>Trà trái cây</li>
-                            <li>Trà sữa</li>
-                            <li>Kem silky</li>
-                            <li>Cà phê</li>
-                            <li>Đá xay</li>
-                            <li>Bst kim cúc mộc tê</li>
+                            <li><a href="../views/menu/menu1.php">Trà Sữa</a></li>
+                            <li><a href="../views/menu/menu2.php">Coffe</a></li>
+                            <li><a href="../views/menu/menu3.php">Trà Hoa Quả Đặt Biệt</a></li>
+                            <li><a href="../views/menu/menu4.php">OLong</a></li>
+                            <li><a href="../views/menu/menu5.php">Sữa Tươi</a></li>
+                            <li><a href="../views/menu/menu6.php">Trà Trái Cây</a></li>
+                            <li><a href="../views/menu/menu7.php">Món Nóng</a></li>
+                            <li><a href="../views/menu/menu8.php">Đá Xay</a></li>
                         </ul>
                     </div>
-                    <div class="submenu">
-                        <h4>BÁNH</h4>
-                        <ul>
-                            <li>Bánh lạnh</li>
-                            <li>Bánh cookies - croissant</li>
-                            <li>Bánh mì</li>
-                        </ul>
-                        <h4>BST LY GẤU GIÁNG SINH</h4>
-                        <ul>
-                            <li>Combo ly gấu và nước 169k</li>
-                            <li>Ly gấu 149k</li>
-                        </ul>
-                    </div>
+                   
                 </div>
             </li>
             <li class="dropdown">
@@ -417,18 +406,15 @@ if (session_status() == PHP_SESSION_NONE) {
                     <div class="submenu">
                         <h4>TRÀ</h4>
                         <ul>
-                            <li>Trà hộp giấy</li>
-                            <li>Trà gói cao</li>
-                            <li>Trà túi lọc</li>
-                            <li>Trà trà tam giác</li>
-                            <li>Trà lài</li>
-                            <li>Trà xanh </li>
+                            <li><a href="../views/menu/menu9.php">Lục Trà</a></li>
+                            <li><a href="../views/menu/menu12.php">Trà OLong</a></li>
                         </ul>
                     </div>
                     <div class="submenu">
-                        <h4>CÀ PHÊ</h4>
+                        <h4>COFFEE</h4>
                         <ul>
-                            <li>Cà phê hạt không bơ</li>
+                            <li><a href="../views/menu/menu10.php">Cà Phê Phin</a></li>
+                            <li><a href="../views/menu/menu11.php">Cà Phê Hạt</a></li>
                         </ul>
                     </div>
                 </div>
@@ -443,7 +429,7 @@ if (session_status() == PHP_SESSION_NONE) {
                             <li>Liên hệ</li>
                         </ul>
 
-            <li><a href="#">Khuyến Mãi</a></li>
+
             <li><a href="#">Hỗ Trợ</a></li>
         </ul>
     </nav>
@@ -472,17 +458,17 @@ if (session_status() == PHP_SESSION_NONE) {
             ?>
             <tr>
             <td style="display: flex; align-items: center; justify-content: space-between;">
-                            <span style="flex: 1;"><?php echo htmlspecialchars($item['name_product']); ?></span>
+                            <span style="flex: 1;"><?php echo $item['name_product']; ?></span>
                             <img src="../../control/<?php echo $item['address']; ?>" 
-                                alt="Image of <?php echo htmlspecialchars($item['name_product']); ?>" 
+                                alt="Image of <?php echo $item['name_product']; ?>" 
                                 style="width: 100px; height: auto; border-radius: 8px; border: 1px solid #ccc;">
                             </td>
                 <td>
                     <input type="hidden" name="cart_item_id[]" value="<?php echo $item['cart_item_id']; ?>">
                     <input type="number" name="quantity[]" value="<?php echo $item['quantity']; ?>" min="1">
                 </td>
-                <td><?php echo number_format($item['price'], 3, ',', '.') . "đ"; ?></td>
-                <td><?php echo number_format($item_total, 3, ',', '.') . "đ"; ?></td>
+                <td><?php echo $item['price'], "đ"; ?></td>
+                <td><?php echo number_format($item_total, 3, '.', '.') . "đ"; ?></td>
                 <td>
                     <a href="../../control/index.php?chucnang=remove&cart_item_id=<?php echo $item['cart_item_id']; ?>">Xóa</a>
                 </td>
@@ -495,8 +481,8 @@ if (session_status() == PHP_SESSION_NONE) {
     </form>
 
     <div class="cart-summary">
-    <p>Tổng thanh toán: <span class="highlight"><?php echo number_format($total, 3, ',', '.') . "đ"; ?></span></p>
-    <button onclick="window.location.href='../Invoice/invoice.php';">Thanh Toán</button> 
+    <p>Tổng thanh toán: <span class="highlight"><?php echo number_format($total, 3, '.', '.') . "đ"; ?></span></p>
+    <button onclick="window.location.href='../Invoice/invoice.php';">Đặt Hàng</button> 
     <button onclick="window.location.href='../../index.php';">Quay lại menu</button>
 </div>
 <?php else: ?>

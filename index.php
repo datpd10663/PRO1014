@@ -53,7 +53,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compact Header Section</title>
+    <title>Trang chủ</title>
    
     <script src="./script.js"></script>
     <style>
@@ -811,11 +811,14 @@ footer {
         
         <div class="l1">
             <i class="icons">
+            <a href="./control/index.php?chucnang=view_profile">
                 <img src="./img/profile.png" alt="Profile Icon" class="icon">
+            </a>
                 <ul>
                     <?php if (isset($_SESSION['username'])) { ?>
                         <li><a href="./control/index.php?chucnang=view">Giỏ hàng</a></li>
-                        <li><a href="./views/Invoice/hoadon.php">Đơn Hàng</a></li>
+                        <li><a href="./views/Invoice/donhang.php">Đơn hàng</a></li>
+                        <li><a href="./views/Invoice/hoadon.php">Hóa đơn</a></li>
                         <li><a href="./control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
                         <li><a href="./control/index.php?chucnang=login">Đăng nhập</a></li>

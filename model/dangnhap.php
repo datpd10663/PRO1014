@@ -32,31 +32,46 @@ function themmoitk($username, $email, $password, $phone_number, $address)
     }
 }
 
-
-
-function chinhsuatk($id, $username, $password, $phone_number, $address)
+function chinhsuatk($user_id, $username, $phone_number, $address)
 {
     global $conn;
-
-    // Mã hóa mật khẩu
-    $hashed_password = hash('sha256', $password);
 
     $sql = "UPDATE User 
-            SET username = ?, password = ?, phone_number = ?, address = ? 
-            WHERE id = ?";
-    
+            SET username = ?, phone_number = ?, address = ? 
+            WHERE user_id = ?";
+
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssi", $username, $hashed_password, $phone_number, $address, $id);
-    $stmt->execute();
+    if ($stmt) {
+        $stmt->bind_param("sssi", $username, $phone_number, $address, $user_id);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            $stmt->close();
+            return true; // Cập nhật thành công
+        } else {
+            $stmt->close();
+            return false; // Không có hàng nào bị ảnh hưởng
+        }
+    } else {
+        // Trả về false nếu có lỗi khi chuẩn bị câu lệnh
+        return false;
+    }
 }
 
-
-function xoatk($id)
-{
+function xoatk($id) {
     global $conn;
-    $sql = "DELETE FROM User WHERE id = ?";
-    $stmt = $conn->prepare($sql);
+    $sqlDeleteCart = "DELETE FROM cart WHERE user_id = ?";
+    $stmt = $conn->prepare($sqlDeleteCart);
     $stmt->bind_param("i", $id);
     $stmt->execute();
+    $stmt->close();
+
+    // Xóa tài khoản người dùng
+    $sqlDeleteUser = "DELETE FROM User WHERE user_id = ?";
+    $stmt = $conn->prepare($sqlDeleteUser);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
 }
+
 ?>

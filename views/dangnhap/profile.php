@@ -1,63 +1,14 @@
-<?php
-include_once('../../model/config.php');
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Sau khi xác thực, lưu tên người dùng vào session
-$user = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8') : null;
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-}
-
-// Kiểm tra nếu người dùng đã đăng nhập
-if ($user) {
-    // Lấy user ID từ session
-    $user_id = $_SESSION['user_id'];
-
-    // Truy vấn dữ liệu giỏ hàng từ cơ sở dữ liệu nếu cần
-    $cart_query = "SELECT c.cart_id, ci.cart_item_id, ci.product_id, ci.quantity, p.name_product, p.price, p.address
-                FROM Cart c
-                JOIN Cart_Item ci ON c.cart_id = ci.cart_id
-                JOIN Product p ON ci.product_id = p.product_id
-                WHERE c.user_id = ?";
-    
-    $stmt = $conn->prepare($cart_query);
-    $stmt->bind_param("i", $user_id); // 'i' cho kiểu dữ liệu integer
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-    $cart_items = $result->fetch_all(MYSQLI_ASSOC);
-
-    $stmt->close();
-} else {
-    $cart_items = $_SESSION['cart']; // Nếu chưa đăng nhập, sử dụng dữ liệu từ session
-}
-
-// Đếm số lượng sản phẩm trong giỏ hàng
-$giohang_count = count($cart_items);
-
-// Chạy truy vấn khác sau khi truy vấn giỏ hàng đã xong
-$sql = 'SELECT * FROM Product WHERE category_id = 9';
-$tacasanpham = mysqli_query($conn, $sql);
-
-// Kiểm tra nếu có lỗi khi thực thi truy vấn
-if (!$tacasanpham) {
-    die("Lỗi truy vấn: " . mysqli_error($conn));
-}
-?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compact Header Section</title>
-    <link>
-    <link rel="stylesheet" href="menu.css">
+    <title>Trang chủ</title>
+   
     <script src="./script.js"></script>
     <style>
-               .logo{
+        .logo{
             width: 100px;
             margin-right: 10px;
         }
@@ -784,42 +735,64 @@ footer {
     background-color: orange; /* Màu xanh lá cây cho nút Đặt Mua */
     color: white; /* Màu chữ trắng */
 }
-
-
-
+ form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .message {
+            color: #d9534f;
+            text-align: center;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 <header class="header">
     <div class="header-left">
-        <img src="../../img/logo bee.png" height="50%" width="500px;" alt="Logo" class="logo">
-        <input type="text" placeholder="Bạn muốn mua gì..." class="search-bar">
+        <img src="../img/logo bee.png" height="50%" width="500px;" alt="Logo" class="logo">
     </div>
-    
     <div class="header-right">
         <div class="icons">
-            <a href="./views/cart/cartview.php">
-            <span class="cart-count">🛒 <?php echo $giohang_count; ?></span>
-            </a>
         </div>
         <div class="user-greeting">
-            <?php if ($user): ?>
-                <b style="position:relative; vertical-align: middle; font-weight:400; margin-top: 40px;">Xin chào - <?php echo $user; ?></b>
-            <?php endif; ?>
         </div>
-        
         <div class="l1">
             <i class="icons">
-                <img src="../../img/profile.png" alt="Profile Icon" class="icon">
+            <a href="./control/index.php?chucnang=view_profile">
+                <img src="../img/profile.png" alt="Profile Icon" class="icon">
+            </a>
                 <ul>
                     <?php if (isset($_SESSION['username'])) { ?>
-                        <li><a href="../../control/index.php?chucnang=view">Giỏ hàng</a></li>
-                        <li><a href="../../views/Invoice/donhang.php">Đơn hàng</a></li>
-                        <li><a href="../../views/Invoice/hoadon.php">Hóa đơn</a></li>
-                        <li><a href="../../control/index.php?chucnang=logout">Đăng xuất</a></li>
+                        <li><a href="./control/index.php?chucnang=view">Giỏ hàng</a></li>
+                        <li><a href="./views/Invoice/donhang.php">Đơn hàng</a></li>
+                        <li><a href="./views/Invoice/hoadon.php">Hóa đơn</a></li>
+                        <li><a href="./control/index.php?chucnang=logout">Đăng xuất</a></li>
                     <?php } else { ?>
-                        <li><a href="../../control/index.php?chucnang=login">Đăng nhập</a></li>
-                        <li><a href="../../control/index.php?chucnang=dangki">Đăng ký</a></li>
+                        <li><a href="./control/index.php?chucnang=login">Đăng nhập</a></li>
+                        <li><a href="./control/index.php?chucnang=dangki">Đăng ký</a></li>
                     <?php } ?>
                 </ul>
             </i>
@@ -830,41 +803,41 @@ footer {
 
     <nav class="navbar">
         <ul class="nav-list">
-             <li><a href="../../index.php">Trang Chủ</a></li>
+            <li><a href="../index.php">Trang Chủ</a></li>
             <li class="dropdown">
-                <a href="#" class="nav-link">Menu</a>  
+                <a href="./views/menu/menu1.php " class="nav-link">Menu</a>  
                 <div class="dropdown-content">
                     <div class="submenu">
                         <h4>THỨC UỐNG</h4>
                         <ul>
-                            <li><a href="menu1.php">Trà Sữa</a></li>
-                            <li><a href="menu2.php">Coffe</a></li>
-                            <li><a href="menu3.php">Trà Hoa Quả Đặt Biệt</a></li>
-                            <li><a href="menu4.php">OLong</a></li>
-                            <li><a href="menu5.php">Sữa Tươi</a></li>
-                            <li><a href="menu6.php">Trà Trái Cây</a></li>
-                            <li><a href="menu7.php">Món Nóng</a></li>
-                            <li><a href="menu8.php">Đá Xay</a></li>
+                            <li><a href="../views/menu/menu1.php">Trà Sữa</a></li>
+                            <li><a href="../views/menu/menu2.php">Coffe</a></li>
+                            <li><a href="../views/menu/menu3.php">Trà Hoa Quả Đặt Biệt</a></li>
+                            <li><a href="../views/menu/menu4.php">OLong</a></li>
+                            <li><a href="../views/menu/menu5.php">Sữa Tươi</a></li>
+                            <li><a href="../views/menu/menu6.php">Trà Trái Cây</a></li>
+                            <li><a href="../views/menu/menu7.php">Món Nóng</a></li>
+                            <li><a href="../views/menu/menu8.php">Đá Xay</a></li>
                         </ul>
                     </div>
                    
                 </div>
             </li>
-             <li class="dropdown">
+            <li class="dropdown">
                 <a href="#" class="nav-link">Sản Phẩm Đóng Gói</a>
                 <div class="dropdown-content">
                     <div class="submenu">
                         <h4>TRÀ</h4>
                         <ul>
-                            <li><a href="menu8.php">Lục Trà</a></li>
-                            <li><a href="menu12.php">Trà OLong</a></li>
+                            <li><a href="../views/menu/menu9.php">Lục Trà</a></li>
+                            <li><a href="../views/menu/menu12.php">Trà OLong</a></li>
                         </ul>
                     </div>
                     <div class="submenu">
                         <h4>COFFEE</h4>
                         <ul>
-                            <li><a href="menu10.php">Cà Phê Phin</a></li>
-                            <li><a href="menu11.php">Cà Phê Hạt</a></li>
+                            <li><a href="../views/menu/menu10.php">Cà Phê Phin</a></li>
+                            <li><a href="../views/menu/menu11.php">Cà Phê Hạt</a></li>
                         </ul>
                     </div>
                 </div>
@@ -883,128 +856,28 @@ footer {
             <li><a href="#">Hỗ Trợ</a></li>
         </ul>
     </nav>
-    <div class="product-section">
-        <div class="sidebar">
-            <h4>Trà</h4>
-            <ul>
-                <li><a href="./menu9.php">Lục Trà</a></li>
-                <li><a href="./menu12.php">Trà Olong</a></li>
-            </ul>
-        </div>
-        
-        <div class="product-container">
-            <h2>Lục Trà</h2>
-            
-            <div class="product-container">
-<?php while ($product = mysqli_fetch_assoc($tacasanpham)) { ?>
-                <!--Sản Phẩm 1-->
-                <div class="product-card" >
-                    <div >
-                    <a href="../../views/chitietsanpham/chitiet.php?id=<?php echo $product['product_id']; ?>">
-                            <img src="../../control/<?php echo $product['address']; ?>"style="width: 100%; height: auto;">
-                        </a>
-                    </div>
-                    <div class="description">
-                    <h3><?php echo ($product['name_product']); ?></h3>
-            <p><?php echo ($product['price']); ?> ₫</p>
-            <a href="../../control/index.php?chucnang=add&product_id=<?php echo $product['product_id']; ?>"><button class="btn-order">🛒 Đặt mua</button></a>
-                    </div>
-                </div>
-                <?php } ?>
-            </div>
-        </div>
-    </div>
-    
-    </div>
-      <!-- Full tên đồ uống sau dấu ... -->
-    <div id="tooltip" class="tooltip"></div>  
-    <script src="Menu.js"></script>
 
-    <!-- Footter -->
-    <footer style="background-color: #007a2a; color: white; padding: 20px; font-size: 15px; line-height: 1.6;">
-        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-          <!-- Phần địa chỉ -->
-          <div style="flex: 1 1 300px; min-width: 300px;">
-            <h4 style="font-size: 17px; margin-bottom: 10px;">ĐỊA CHỈ</h4>
-            <p style="margin-bottom: 10px;">
-              Trụ sở chính: Công ty Cổ Phần Phúc Long Heritage - ĐKKD: 0316 871719 do sở KHĐT TPHCM cấp lần đầu ngày 21/05/2021<br>
-              Nhà máy: D_8D_CN Đường XE 1, Khu Công Nghiệp Mỹ Phước III, phường Mỹ Phước, thị xã Bến Cát, tỉnh Bình Dương, Việt Nam.<br>
-              Địa chỉ: Phòng 702, Tầng 7, Tòa nhà Central Plaza, số 17 Lê Duẩn, phường Bến Nghé, quận 1, Hồ Chí Minh.
-            </p>
-            <p style="margin-bottom: 10px;">
-              Hotline Đặt hàng: <b>1800 6779</b><br>
-              Hotline Công ty: <b>1900 2345 18</b> (Bấm phím 0: Lễ Tân | phím 1: CSKH)<br>
-              Email: <a href="mailto:sales@phuclong.masangroup.com" style="color: white;">sales@phuclong.masangroup.com</a>, <a href="mailto:info2@phuclong.masangroup.com" style="color: white;">info2@phuclong.masangroup.com</a>
-            </p>
-          </div>
-      
-          <!-- Các danh mục -->
-          <div style="flex: 2 1 600px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-            <!-- Cột 1 -->
-            <div>
-              <h4 style="font-size: 17px; margin-bottom: 8px;">CÔNG TY</h4>
-              <ul style="list-style: none; padding: 0; margin: 0;">
-                <li style="margin-bottom: 8px;"><a href="/gioi-thieu" style="color: white; text-decoration: none;">Giới thiệu công ty</a></li>
-                <li style="margin-bottom: 8px;"><a href="/thu-vien-hinh-anh" style="color: white; text-decoration: none;">Thư viện hình ảnh</a></li>
-                <li style="margin-bottom: 8px;"><a href="/lien-he" style="color: white; text-decoration: none;">Liên hệ</a></li>
-              </ul>
-            </div>
-      
-            <div>
-              <h4 style="font-size: 17px; margin-bottom: 8px;">TUYỂN DỤNG</h4>
-              <ul style="list-style: none; padding: 0; margin: 0;">
-                <li style="margin-bottom: 8px;"><a href="/tuyen-dung/htch" style="color: white; text-decoration: none;">HTCH</a></li>
-                <li style="margin-bottom: 8px;"><a href="/tuyen-dung/kiosk" style="color: white; text-decoration: none;">Kiosk</a></li>
-                <li style="margin-bottom: 8px;"><a href="/tuyen-dung/van-phong" style="color: white; text-decoration: none;">Văn phòng</a></li>
-                <li style="margin-bottom: 8px;"><a href="/tuyen-dung/nha-may" style="color: white; text-decoration: none;">Nhà máy</a></li>
-              </ul>
-            </div>
-      
-            <div>
-              <h4 style="font-size: 17px; margin-bottom: 8px;">KHUYẾN MÃI</h4>
-              <ul style="list-style: none; padding: 0; margin: 0;">
-    <li style="margin-bottom: 8px;"><a href="/khuyen-mai" style="color: white; text-decoration: none;">Tin khuyến mãi</a></li>
-              </ul>
-            </div>
-      
-            <!-- Cột 2 -->
-            <div>
-              <h4 style="font-size: 17px; margin-bottom: 8px;">CỬA HÀNG</h4>
-              <ul style="list-style: none; padding: 0; margin: 0;">
-                <li style="margin-bottom: 8px;"><a href="/cua-hang" style="color: white; text-decoration: none;">Danh sách cửa hàng</a></li>
-              </ul>
-            </div>
-      
-            <div>
-              <h4 style="font-size: 17px; margin-bottom: 8px;">HỘI VIÊN</h4>
-              <ul style="list-style: none; padding: 0; margin: 0;">
-                <li style="margin-bottom: 8px;"><a href="/hoi-vien/faq" style="color: white; text-decoration: none;">Câu hỏi thường gặp (FAQ)</a></li>
-                <li style="margin-bottom: 8px;"><a href="/hoi-vien/dieu-khoan-chuong-trinh" style="color: white; text-decoration: none;">Điều khoản và điều kiện chương trình hội viên</a></li>
-                <li style="margin-bottom: 8px;"><a href="/hoi-vien/dieu-khoan-the-tra-truoc" style="color: white; text-decoration: none;">Điều khoản & Điều kiện Thẻ trả trước</a></li>
-              </ul>
-            </div>
-      
-            <div>
-              <h4 style="font-size: 17px; margin-bottom: 8px;">ĐIỀU KHOẢN SỬ DỤNG</h4>
-              <ul style="list-style: none; padding: 0; margin: 0;">
-                <li style="margin-bottom: 8px;"><a href="/dieu-khoan/chinh-sach-bao-mat" style="color: white; text-decoration: none;">Chính sách bảo mật thông tin</a></li>
-                <li style="margin-bottom: 8px;"><a href="/dieu-khoan/chinh-sach-dat-hang" style="color: white; text-decoration: none;">Chính sách đặt hàng</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      
-       <!-- Phần cuối -->
-    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; font-size: 16px;">
-        <p>© Công ty CP Phúc Long Heritage 2024</p>
-        <div>
-          <img src="http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png" alt="Đã thông báo Bộ Công Thương" style="height: 40px; margin-right: 15px;">
-          <a href="#"><img src="/img/IG.jpg" alt="Instagram" style="height: 30px;"></a>
-          <a href="#"><img src="/img/Face.jpg" alt="Facebook" style="height: 30px; margin: 0 15px;"></a>
-          <a href="#"><img src="/img/youtube.jpg" alt="YouTube" style="height: 30px;"></a>
-        </div>
-      </div>
-      </footer>
-    
+       
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thông tin Hồ Sơ</h1>
+        <?php if (isset($message)) { echo "<p class='message'>$message</p>"; } ?>
+        <?php if (isset($user)) { ?>
+            <form method="POST" action="../control/index.php?chucnang=update_profile">
+                <label for="username">Tên người dùng:</label>
+                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required><br>
+                
+                <label for="phone_number">Số điện thoại:</label>
+                <input type="text" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($user['phone_number']); ?>" required><br>
+                
+                <label for="address">Địa chỉ:</label>
+                <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($user['address']); ?>"><br>
+                
+                <input type="submit" value="Cập nhật">
+            </form>
+        <?php } ?>
+    </div>
 </body>
 </html>

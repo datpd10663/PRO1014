@@ -86,7 +86,7 @@
         <?php if (isset($danhmuc)) { ?>
         <form action="index.php?chucnang=xulysuadm&ma=<?php echo $danhmuc['category_id']; ?>" method="post">
             <label for="name_category">Tên danh mục</label>
-            <input type="text" name="name_category" id="name_category" value="<?php echo htmlspecialchars($danhmuc['name_category'], ENT_QUOTES, 'UTF-8'); ?>" required>
+            <input type="text" name="name_category" id="name_category" value="<?php echo $danhmuc['name_category']; ?>" required>
             <br>
             <input type="submit" value="Cập nhật">
         </form>

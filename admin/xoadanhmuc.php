@@ -46,7 +46,7 @@
 <body>
     <div class="container">
         <h1>Bạn có chắc chắn xóa danh mục này này?</h1>
-        <h2><?php echo htmlspecialchars($danhmuc['name_category']); ?></h2>
+        <h2><?php echo $danhmuc['name_category']; ?></h2>
         <p>Mã danh mục: <strong><?php echo $danhmuc['category_id']; ?></strong></p>
         <form action="index.php?chucnang=xulyxoadm" method="post">
             <!-- Lưu mã xóa -->

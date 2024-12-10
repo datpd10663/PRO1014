@@ -111,22 +111,22 @@ $total_amount = $_SESSION['total'];
     <div class="container">
         <h2>Thông tin đặt hàng</h2>
         <form action="../../control/index.php?chucnang=process_payment" method="post">
-            <div class="form-group">
-                <label for="name">Tên người nhận</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="billing_address">Địa chỉ</label>
-                <input type="text" id="billing_address" name="billing_address" required>
-            </div>
-            <div class="form-group">
-                <label for="phone">Số điện thoại</label>
-                <input type="tel" id="phone" name="phone" required>
-            </div>
-            <div class="form-group">
-                <label for="notes">Ghi chú</label>
-                <textarea id="notes" name="notes"></textarea>
-            </div>
+                <div class="form-group">
+                    <label for="name">Tên người nhận</label>
+                    <input type="text" id="name" name="recipient_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="billing_address">Địa chỉ</label>
+                    <input type="text" id="billing_address" name="billing_address" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Số điện thoại</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Ghi chú</label>
+                    <textarea id="notes" name="notes"></textarea>
+                </div>
 
             <h3>Đơn hàng của bạn</h3>
             <div class="order-summary">
@@ -141,18 +141,18 @@ $total_amount = $_SESSION['total'];
                         <tr>
        
                             <td style="display: flex; align-items: center; justify-content: space-between;">
-                            <span style="flex: 1;"><?php echo htmlspecialchars($item['name_product']); ?></span>
+                            <span style="flex: 1;"><?php echo $item['name_product']; ?></span>
                             <img src="../../control/<?php echo $item['address']; ?>" 
-                                alt="Image of <?php echo htmlspecialchars($item['name_product']); ?>" 
+                                alt="Image of <?php echo $item['name_product']; ?>" 
                                 style="width: 100px; height: auto; border-radius: 8px; border: 1px solid #ccc;">
                             </td>
                             <td><?php echo $item['quantity']; ?></td>
-                            <td><?php echo number_format($item['price'], 3, ',', '.') . "đ"; ?></td>
-                            <td><?php echo number_format($item['quantity'] * $item['price'], 3, ',', '.') . "đ"; ?></td>
+                            <td><?php echo $item['price'],"đ"; ?></td>
+                            <td><?php echo number_format($item['quantity'] * $item['price'], 3, '.', '.') . "đ"; ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </table>
-                <p><strong>Tổng cộng:</strong> <?php echo number_format($total_amount, 3, ',', '.') . "đ"; ?></p>
+                <p><strong>Tổng cộng:</strong> <?php echo number_format($total_amount, 3, '.', '.') . "đ"; ?></p>
             </div>
             <br>
             <button type="submit" class="btn">Hoàn tất đặt hàng</button>

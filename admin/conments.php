@@ -1,11 +1,16 @@
 <?php
-    require_once('../model/config.php');
-    if (session_status() == PHP_SESSION_NONE) {
-        session_start();
-    }
-    $user = isset($_SESSION['username']) ? $_SESSION['username'] : '';
-    $sql = 'select * from Product';
-    $tacasanpham = mysqli_query($conn,$sql);
+require_once('../model/config.php');
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+$user = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+
+// Lấy tất cả bình luận
+$sql = "SELECT c.comment_id, c.product_id, c.user_id, c.comment_text, c.admin_reply, c.created_at, p.name_product 
+        FROM comments c 
+        JOIN Product p ON c.product_id = p.product_id";
+$comments = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
@@ -29,7 +34,7 @@
     <article class="row">
         <section class="col-2 bg-secondary pb-4">
             <figure class="figure mt-3 center">
-                <img src="../img/logo bee.png" class="figure-img img-fluid rounded" alt="...">
+                <img src="../img/logo bee.png" class="figure-img img-fluid rounded" alt="..." >
                 <figcaption class="figure-caption text-center text-white font-weight-bold">
                 <?php if (isset($_SESSION['username'])) { ?>
                     <b style=" position:relative; top:-4px; vertical-align: middle; font-weight:400;"> Xin chào - <?php echo $user; ?></b>
@@ -41,6 +46,10 @@
             <hr>
             <nav>
             <div class="list-group">
+                <a class="list-group-item list-group-item-action list-group-item-dark" href="admin.php">
+                    <i class="bi bi-box2 mr-2" style="font-size: 20px;"></i>Quản Lý sản phẩm
+                </a>
+
                 <a class="list-group-item list-group-item-action list-group-item-dark" href="danhmuc.php">
                     <i class="bi bi-clipboard mr-2" style="font-size: 20px;"></i>Quản Lý Danh Mục
                 </a>
@@ -50,48 +59,52 @@
                 </a>
                 
                 <a class="list-group-item list-group-item-action list-group-item-dark" href="donhang.php">
-                    <i class="bi bi-file-text mr-2" style="font-size: 20px;"></i>Quản Lý Đơn Hàng
+                    <i class="bi bi-chat-text mr-2" style="font-size: 20px;"></i>Quản Lý Đơn Hàng
                 </a>
                 
-                <a class="list-group-item list-group-item-action list-group-item-dark" href="hoadon.php">
+                <a class="list-group-item list-group-item-action list-group-item-dark" href="haodon.php">
                     <i class="bi bi-file-earmark-text mr-2" style="font-size: 20px;"></i>Quản Lý Hóa Đơn
-                </a>
-                <a class="list-group-item list-group-item-action list-group-item-dark" href="conments.php">
-                    <i class="bi bi-chat-text mr-2" style="font-size: 20px;"></i>Quản Lý Bình Luận
                 </a>
             </div>
 
             </nav>
         </section>
         <section class="col-10 bg-light">
-            <h2 class="mt-3">Quản lý Sản Phẩm</h2>
-            <a class="btn btn-success mb-3" href="../control/index.php?chucnang=themmoi">Thêm mới</a>
-            <table class="table table-bordered table-hover bg-white">
-                
-                <tr class="table-active">
-                    <td>Mã SP</td>
-                    <td>Tên Sản Phẩm</td>
-                    <td>Hình Ảnh</td>
-                    <td>Giá</td>
-                    <td>Mô Tả</td>
-                    <td>Hành Động</td>
-                </tr>
-                <?php while ($sanpham = mysqli_fetch_assoc($tacasanpham)) { ?>
+        <h1 class="mt-4">Quản Lý Bình Luận</h1>
+    <table class="table table-bordered table-hover mt-3">
+        <thead class="table-dark">
             <tr>
-                <td><?php echo $sanpham['product_id']; ?></td>
-                <td><?php echo $sanpham['name_product']; ?></td>
-                <td><img src="../control/<?php echo $sanpham['address']; ?>" width="150px" height="150px;"></td>
-                <td><?php echo $sanpham['price']; ?></td>
-                <td><?php echo $sanpham['description']; ?></td>
-                <td>
-                    <a class="btn btn-info" href="../control/index.php?chucnang=sua&ma=<?php echo $sanpham['product_id']; ?>">Sửa</a>
-                    <a class="btn btn-danger" href="../control/index.php?chucnang=xoa&ma=<?php echo $sanpham['product_id']; ?>">Xóa</a>
-                </td>
+                <th>Mã BL</th>
+                <th>Sản Phẩm</th>
+                <th>Người Dùng</th>
+                <th>Nội Dung</th>
+                <th>Phản Hồi</th>
+                <th>Ngày Tạo</th>
+                <th>Hành Động</th>
             </tr>
-        <?php } ?>
-               
-
-            </table>
+        </thead>
+        <tbody>
+            <?php while ($comment = mysqli_fetch_assoc($comments)) { ?>
+                <tr>
+                    <td><?php echo $comment['comment_id']; ?></td>
+                    <td><?php echo $comment['name_product']; ?></td>
+                    <td><?php echo $comment['user_id']; ?></td>
+                    <td><?php echo $comment['comment_text']; ?></td>
+                    <td><?php echo $comment['admin_reply'] ?: 'Chưa phản hồi'; ?></td>
+                    <td><?php echo $comment['created_at']; ?></td>
+                    <td>
+                        <!-- Form Phản Hồi -->
+                        <form method="POST" action="../control/index.php?chucnang=reply_comment" class="mb-0">
+                            <input type="hidden" name="action" value="reply_comment">
+                            <input type="hidden" name="comment_id" value="<?php echo $comment['comment_id']; ?>">
+                            <textarea class="form-control mb-2" name="admin_reply" placeholder="Nhập phản hồi..."><?php echo htmlspecialchars($comment['admin_reply']); ?></textarea>
+                            <button type="submit" class="btn btn-sm btn-primary">Lưu Phản Hồi</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
             <ul class="pagination pagination-sm text-dark">
                 <li class="page-item active" aria-current="page">
                     <a class="page-link bg-dark border-0" href="#">1</a>

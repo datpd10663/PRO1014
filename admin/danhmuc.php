@@ -17,7 +17,7 @@ if (!$conn) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Danh mucj</title>
+    <title>Quản lý Danh Mục</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
@@ -28,7 +28,7 @@ if (!$conn) {
     <article class="row">
         <section class="col-2 bg-secondary pb-4">
             <figure class="figure mt-3 center">
-                <img src="../img/logo.jpg" class="figure-img img-fluid rounded" alt="Logo" style="width: 150px; margin-left: 35px;">
+                <img src="../img/logo bee.png" class="figure-img img-fluid rounded" alt="Logo">
                 <figcaption class="figure-caption text-center text-white font-weight-bold">
                 <?php if (isset($_SESSION['username'])) { ?>
                     <b style="position:relative; top:-4px; vertical-align: middle; font-weight:400;">Xin chào - <?php echo htmlspecialchars($user); ?></b>
@@ -41,13 +41,16 @@ if (!$conn) {
             <nav>   
             <div class="list-group">
                 <a class="list-group-item list-group-item-action list-group-item-dark" href="admin.php">
-                    <i class="bi bi-clipboard mr-2" style="font-size: 20px;"></i>Quản Lý sản phẩm
+                    <i class="bi bi-box2 mr-2" style="font-size: 20px;"></i>Quản Lý sản phẩm
                 </a>
                 <a class="list-group-item list-group-item-action list-group-item-dark" href="user.php">
                     <i class="bi bi-person mr-2" style="font-size: 20px;"></i>Quản Lý Tài Khoản
                 </a>
-                <a class="list-group-item list-group-item-action list-group-item-dark" href="manage_comments.php">
+                <a class="list-group-item list-group-item-action list-group-item-dark" href="conments.php">
                     <i class="bi bi-chat-text mr-2" style="font-size: 20px;"></i>Quản Lý Bình Luận
+                </a>
+                <a class="list-group-item list-group-item-action list-group-item-dark" href="donhang.php">
+                    <i class="bi bi-file-text mr-2" style="font-size: 20px;"></i>Quản Lý Đơn Hàng
                 </a>
                 <a class="list-group-item list-group-item-action list-group-item-dark" href="haodon.php">
                     <i class="bi bi-file-earmark-text mr-2" style="font-size: 20px;"></i>Quản Lý Hóa Đơn
@@ -68,11 +71,11 @@ if (!$conn) {
                 if ($tacadanhmuc) {
                     while ($danhmuc = mysqli_fetch_assoc($tacadanhmuc)) { ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($danhmuc['category_id']); ?></td>
-                        <td><?php echo htmlspecialchars($danhmuc['name_category']); ?></td>
+                        <td><?php echo $danhmuc['category_id']; ?></td>
+                        <td><?php echo $danhmuc['name_category']; ?></td>
                         <td>
-                            <a class="btn btn-info" href="../control/index.php?chucnang=suadm&ma=<?php echo htmlspecialchars($danhmuc['category_id']); ?>">Sửa</a>
-                            <a class="btn btn-danger" href="../control/index.php?chucnang=xoadm&ma=<?php echo htmlspecialchars($danhmuc['category_id']); ?>">Xóa</a>
+                            <a class="btn btn-info" href="../control/index.php?chucnang=suadm&ma=<?php echo $danhmuc['category_id']; ?>">Sửa</a>
+                            <a class="btn btn-danger" href="../control/index.php?chucnang=xoadm&ma=<?php echo $danhmuc['category_id']; ?>">Xóa</a>
                         </td>
                     </tr>
                 <?php }

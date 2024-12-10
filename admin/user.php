@@ -35,7 +35,7 @@
                     <b style=" position:relative; top:-4px; vertical-align: middle; font-weight:400;"> Xin chào - <?php echo $user; ?></b>
                 <?php } ?>
                     <br>
-                    <a class="text-dark" href="logout.php">Đăng Xuất</a>
+                    <a class="text-dark" href="../control/index.php?chucnang=logout">Đăng Xuất</a>
                 </figcaption>
             </figure>
             <hr>
@@ -45,14 +45,16 @@
                     <i class="bi bi-clipboard mr-2" style="font-size: 20px;"></i>Quản Lý Danh Mục
                 </a>
                 
-                <a class="list-group-item list-group-item-action list-group-item-dark" href="user.php">
-                    <i class="bi bi-person mr-2" style="font-size: 20px;"></i>Quản Lý Tài Khoản
+                <a class="list-group-item list-group-item-action list-group-item-dark" href="admin.php">
+                    <i class="bi bi-box2 mr-2" style="font-size: 20px;"></i>Quản Lý Sản Phẩm
                 </a>
                 
-                <a class="list-group-item list-group-item-action list-group-item-dark" href="manage_comments.php">
+                <a class="list-group-item list-group-item-action list-group-item-dark" href="conments.php">
                     <i class="bi bi-chat-text mr-2" style="font-size: 20px;"></i>Quản Lý Bình Luận
                 </a>
-                
+                <a class="list-group-item list-group-item-action list-group-item-dark" href="donhang.php">
+                    <i class="bi bi-file-text mr-2" style="font-size: 20px;"></i>Quản Lý Đơn Hàng
+                </a>
                 <a class="list-group-item list-group-item-action list-group-item-dark" href="haodon.php">
                     <i class="bi bi-file-earmark-text mr-2" style="font-size: 20px;"></i>Quản Lý Hóa Đơn
                 </a>
@@ -83,7 +85,7 @@
                 
                 <td>
                   
-                    <a class="btn btn-danger" href="../control/index.php?chucnang=xoa&ma=<?php echo $user['user_id']; ?>">Xóa</a>
+                    <a class="btn btn-danger" href="../control/index.php?chucnang=xoa_user&ma=<?php echo $user['user_id']; ?>">Xóa</a>
                 </td>
             </tr>
         <?php } ?>

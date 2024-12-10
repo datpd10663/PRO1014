@@ -17,7 +17,7 @@ if (!$conn) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="widtd=device-widtd, initial-scale=1.0">
-    <title>Quản lý Đơn Hàng</title>
+    <title>Quản lý Hóa Đơn</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
@@ -52,21 +52,24 @@ if (!$conn) {
                 <a class="list-group-item list-group-item-action list-group-item-dark" href="haodon.php">
                     <i class="bi bi-file-earmark-text mr-2" style="font-size: 20px;"></i>Quản Lý Hóa Đơn
                 </a>
-                <a class="list-group-item list-group-item-action list-group-item-dark" href="hoadon.php">
-                    <i class="bi bi-file-text mr-2" style="font-size: 20px;"></i>Quản Lý Hóa Đơn
+                <a class="list-group-item list-group-item-action list-group-item-dark" href="donhang.php">
+                    <i class="bi bi-file-text mr-2" style="font-size: 20px;"></i>Quản Lý Đơn Hàng
                 </a>
             </div>
             </nav>
         </section>
         <section class="col-10 bg-light">
-            <h2 class="mt-3">Quản lý Đơn Hàng</h2>
+            <h2 class="mt-3">Quản lý Hóa Đơn</h2>
             <table class="table table-bordered table-hover bg-white">
                 <tr class="table-active">
-                <td>Mã Đơn hàng</td>
+                <td>Mã Hóa Đơn</td>
                     <td>Tổng tiền</td>
                     <td>Ngày đến hạn</td>
                     <td>Trạng thái đơn hàng</td>
                     <td>Địa chỉ đặt hàng</td>
+                    <td>Tên người nhận</td>
+                    <td>Số điện thoại</td>
+                    <td>Ghi chú</td>
                     <td>thao tác</td>
                 </tr>
                     <?php 
@@ -78,6 +81,9 @@ if (!$conn) {
                             <td><?php echo $invoice['due_date']; ?></td>
                             <td><?php echo $invoice['payment_status']; ?></td>
                             <td><?php echo $invoice['billing_address']; ?></td>
+                            <td><?php echo $invoice['recipient_name']; ?></td>
+                            <td><?php echo $invoice['phone']; ?></td>
+                            <td><?php echo $invoice['notes']; ?></td>
                             <td>
                                 <a class="btn btn-info" href="../control/index.php?chucnang=suadm&ma=<?php echo $invoice['invoice_id']; ?>">Sửa</a>
                                 <a class="btn btn-danger" href="../control/index.php?chucnang=xoadm&ma=<?php echo $invoice['invoice_id']; ?>">Xóa</a>
